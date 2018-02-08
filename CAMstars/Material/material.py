@@ -82,3 +82,4 @@ class material:
 		'''
 
 		return hash(self.name)
+
