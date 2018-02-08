@@ -27,4 +27,4 @@ def parse(fname):
 
 files = glob('../../Data/Field Stars/AJMartin/*.csv')
 materials = list([parse(f) for f in files])
-AJMartinPop = population(materials)
+LFossatiPop = population(materials)
