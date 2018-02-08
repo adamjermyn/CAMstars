@@ -68,3 +68,17 @@ class material:
 		differences = self.logX - abundances
 		combinedVariance = errs**2 + self.dlogX**2
 		return np.sum(gaussianLogLike(differences / combinedVariance**0.5), axis=0)
+
+	def __eq__(self, other):
+		'''
+		Overloads equality operator to be based on name.
+		'''
+
+		return self.name == other.name
+
+	def __hash__(self):
+		'''
+		Overloads hashing operator to be based on name.
+		'''
+
+		return hash(self.name)
