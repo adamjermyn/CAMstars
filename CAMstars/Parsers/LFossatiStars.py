@@ -9,13 +9,20 @@ def parse(fname):
 	names = []
 	logX = []
 	dlogX = []
+
+	# These objects come with a reported systematic uncertainty to apply to all elements.
+	generalSigma = 0
+
 	for i,line in enumerate(fi):
-		if i > 0:
+		if i == 0:
+			s = line.rstrip().split(' ')
+			generalSigma = float(s[-1])
+		elif i > 1:
 			s = line.rstrip().split(',')
 			if len(s) == 3:
 				names.append(s[0])
 				logX.append(float(s[1]))
-				dlogX.append(float(s[2]))
+				dlogX.append((float(s[2])**2 + generalSigma**2)**0.5)
 
 	# L Fossati et. al. report abundances in absolute terms rather than
 	# relative to hydrogen, so we need to correct for this.

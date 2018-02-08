@@ -1,3 +1,4 @@
+General uncertainty: 0.20
 Element,logX,dlogX
 He,-2,0
 O,-3.41,0
@@ -11,3 +12,4 @@ Fe,-3.81,0.12
 Ba,-8.64,0.01
 Pr,-7.57,0.20
 Nd,-7.43,0.10
+
