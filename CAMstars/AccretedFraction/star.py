@@ -4,6 +4,7 @@ from scipy.optimize import newton
 
 import CAMstars.Parsers.opacity as opacity
 from CAMstars.Misc.constants import kB, mP, rSun, mSun, tSun, yr, newtonG, fSun, lSun, sigma
+from CAMstars.Misc.utils import propagate_errors
 
 opalName = '../../Data/Opacity/Opal/GS98.txt'
 fergName = '../../Data/Opacity/Ferguson/f05.gs98/'
@@ -108,6 +109,10 @@ class star:
 			b = d
 			c = -self.height**2 * (mdot / self.photoMass)
 			return (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)	
+
+	def findDF(self, u_rot, du_rot, logmdot, dlogmot, gradient=False, weightRatio=55.):
+		func = lambda x: self.findF(x[0], x[1], gradient=gradient, weightRatio=weightRatio)
+		return propagate_errors(func, [u_rot, 10**logmdot], [du_rot, dlogmot])
 
 	def rotationalMixing(self, u_rot):
 		eps = u_rot**2/(self.radius * self.gravity)
