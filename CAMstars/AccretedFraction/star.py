@@ -11,13 +11,15 @@ op = opacity.opac(opalName, fergName, 0.7, 0.28) # Solar composition
 
 def rhoFromPT(t, p, mu):
 	'''
-	This method returns rho given t, p, and mu.
+	Implements the equation of state to return
+	density (rho) given temperature (t), pressure (p), and
+	mean molecular weight (mu).
 	'''
 	return mu*mP*p/(kB*t)
 
 def approxSAHA(t):
 	'''
-	This implements a very crude model of the SAHA equation
+	Implements a very crude model of the SAHA equation
 	for the mean molecular weight. The model assumes half ionisation
 	at 8500K, exponential behaviour, and a width of 500K.
 	'''
@@ -25,16 +27,19 @@ def approxSAHA(t):
 	return mu
 
 def pFromKappa(kappa, g, tau):
+	'''
+	Implements a crude model of a photosphere in which the pressure
+	is given by the optical depth times the ratio of gravity to opacity.
+	'''
 	return tau*g/kappa
 
 def findRho(op, t, g, tau=2./3):
 	'''
-	This method takes as input an opacity object, a temperature,
-	and a surface gravity and determines the density at which tau
-	matches the specified value (default is 2./3).
+	Takes as input an opacity object, a temperature,
+	and a surface gravity and determines the density at which
+	the optical depth tau matches the specified value (default is 2./3).
 	'''
 
-	# Assuming ionised
 	mu = approxSAHA(t)
 
 	def f(x):
@@ -47,8 +52,20 @@ def findRho(op, t, g, tau=2./3):
 	return 10**logRho
 
 class star:
-	def __init__(self, mass, radius=None, temperature=None):
-		# Raw properties
+	def __init__(self, mass, radius, temperature):
+		'''
+		A star is an object with mass, temperature and radius which represents a
+		physical star. On the assumption of spherical symmetry and solar composition
+		various properties of the star are calculated.
+
+		Auxiliary methods are provided for calculating the results of various mixing
+		properties, most notably the findF method, which returns the expected
+		fraction of accreted material in the photosphere given the rotation rate of the
+		star and the accretion rate onto the star. 
+		'''
+
+
+		# Base properties
 
 		self.mass = mass * mSun
 		self.radius = radius * rSun
