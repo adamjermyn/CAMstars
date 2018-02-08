@@ -23,6 +23,8 @@ class population:
 		# sum_i (x_i - mu)^2 / dx_i^2 / (V_1 - V_2 / V_1),
 		# where mu is the estimated mean, V_1 = sum_i 1/dx_i^2, and V_2 = sum_i 1/dx_i^4.
 		# This is as per the GSL Manual: https://www.gnu.org/software/gsl/manual/html_node/Weighted-Samples.html
+		# Note that these aggregates are only meaningful if the materials of interest were
+		# truly drawn from the same population.
 		self.logX = np.zeros(len(self.species))
 		self.dlogX = np.zeros(len(self.species))
 		for i,s in enumerate(self.species):
