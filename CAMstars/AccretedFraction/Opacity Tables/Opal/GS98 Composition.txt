@@ -1,0 +1,27 @@
+Number fractions and mass fractions for the Z elements through Ni are given for GS98 below.  Heavier elements are included in the computation of the fractions, but are a very small part of the 6th decimal place.  Li, Be, B are not included due to their small abundances too.
+
+GS98	 
+Element	# frac	mass frac
+c	0.246023	0.172062
+n	0.061798	0.050417
+o	0.502315	0.468017
+f	0.000022	0.000025
+ne	0.089326	0.104970
+na	0.001552	0.002078
+mg	0.028247	0.039988
+al	0.002296	0.003607
+si	0.026976	0.044126
+p	0.000270	0.000487
+s	0.011775	0.021991
+cl	0.000142	0.000292
+ar	0.001866	0.004342
+k	0.000100	0.000228
+ca	0.001663	0.003882
+sc	0.000001	0.000002
+ti	0.000065	0.000181
+v	0.000008	0.000023
+cr	0.000364	0.001102
+mn	0.000252	0.000805
+fe	0.023495	0.076413
+co	0.000060	0.000207
+ni	0.001321	0.004517
