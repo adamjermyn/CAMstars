@@ -30,7 +30,6 @@ def parse(fname):
 	nH = 1 - sum(10**w for w in logX)
 	logX = list(w - np.log10(nH) for w in logX)
 
-
 	return material(name, names, logX, dlogX)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
