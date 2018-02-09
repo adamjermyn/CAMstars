@@ -50,6 +50,12 @@ class population:
 
 		return population(materials)
 
+	def __len__(self):
+		'''
+		Returns the number of materials in the population.
+		'''
+		return len(self.materials)
+
 	def query(self, name):
 		'''
 		Returns a list of tuples, each of which contains the name of a
