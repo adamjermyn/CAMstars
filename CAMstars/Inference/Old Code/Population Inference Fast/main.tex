@@ -1,0 +1,55 @@
+\documentclass[preprint]{revtex4-1}
+\usepackage{amsmath}
+
+\begin{document}
+	
+Let $\mathcal{S}$ be the set of stars of interest and $\mathcal{E}_i, i\in \mathcal{S}$ be the set of elements with measured abundances for each star.
+The abundances are measured relative to that of Hydrogen, and given as $X_{ij},j\in\mathcal{E}_i,i\in\mathcal{S}$.
+These are taken to be normally distributed in log-space, so that $\log X_{ij}$ has variance $\sigma_{ij}$.
+To model accretion processes, we assume that the abundance of a given element for a given star has been modified by accretion, such that if $X_{ij,0}$ is the bulk distribution,
+\begin{align}
+	X_{ij} = X_{j,0}\left[(1-f_i) + f_i \exp\left(\delta_i\Theta(T_j - T_{c,i})\right)\right],
+\end{align}
+where $X_{j,0}$ is the bulk abundance of element $j$, taken to be uniform across stars,  $f_i$ is the accreted mass fraction in the photosphere of star $i$, $\delta_i$ is an enhancement or depletion factor for the material around star $i$, $\Theta$ is the Heaviside step function, equal to zero for negative arguments and one for positive ones, $T_j$ is the (known) condensation temperature of element $j$, and $T_{c,i}$ is the condensation temperature associated with star $i$.
+As a result,
+\begin{align}
+	\log X_{ij} = \log X_{j,0} + \ln \left[(1-f_i) + f_i \exp\left(\delta_i\Theta(T_j - T_{c,i})\right)\right],
+\end{align}
+and $\log X_{ij}$ has the same variance as $\log X_{ij,0}$.
+For notational convenience we let
+\begin{align}
+	Q_{ij} \equiv \ln \left[(1-f_i) + f_i \exp\left(\delta_i\Theta(T_j - T_{c,i})\right)\right].
+\end{align}
+
+We would like to infer $X_{ij,0}$ as well as $f_i$, $\delta_i$ and $T_{c,i}$.
+The likelihood function $\mathcal{L}$ for this problem is
+\begin{align}
+	\ln \mathcal{L} = \sum_{i \in \mathcal{S}} \sum_{j\in \mathcal{E}_i} \left[-\frac{1}{2}\ln(2\pi\sigma_{ij}) - \frac{(\log X_{ij} - Q_{ij} - \log X_{j,0})^2}{2\sigma_{ij}^2}\right].
+\end{align}
+Now let
+\begin{align}
+	A_{j} &\equiv \sum_{i\in \mathcal{S}\mathrm{\,s.t.\,}j\in\mathcal{E}_i}\frac{1}{\sigma_{ij}^2},\\
+	B_{j} &\equiv \sum_{i\in \mathcal{S}\mathrm{\,s.t.\,}j\in\mathcal{E}_i} \frac{2 (Q_{ij} - \log X_{ij})}{\sigma_{ij}^2},\\
+	\intertext{and}
+	C_{j} &\equiv \sum_{i\in \mathcal{S}\mathrm{\,s.t.\,}j\in\mathcal{E}_i} (Q_{ij} - \log X_{ij})^2\sigma_{ij}^{-2}.
+\end{align}
+Then
+\begin{align}
+	\ln \mathcal{L} = -\sum_{i \in \mathcal{S}} \sum_{j\in \mathcal{E}_i} -\frac{1}{2}\ln(2\pi\sigma_{ij}) - \sum_{j\in \cup_i \mathcal{E}_i} \frac{1}{2}\left(A_j \log X_{j,0}^2 + B_j \log X_{j,0} + C_j\right).
+\end{align}
+Completing the square for each $j$ yields
+\begin{align}
+	\ln \mathcal{L} = -\sum_{i \in \mathcal{S}} \sum_{j\in \mathcal{E}_i} -\frac{1}{2}\ln(2\pi\sigma_{ij}) - \sum_{j\in \cup_i \mathcal{E}_i} \frac{A_j}{2}\left(\log X_{j,0} + \frac{B_j}{2A_j}\right)^2 + \frac{1}{2}\left(C_j - \frac{B_j^2}{4A_j}\right).
+\end{align}
+Integrating the likelihood over $\log X_{j,0}$ yields the marginalised likelihood function
+\begin{align}
+	\ln \bar{\mathcal{L}} = -\sum_{i \in \mathcal{S}} \sum_{j\in \mathcal{E}_i} -\frac{1}{2}\ln(2\pi\sigma_{ij}) - \sum_{j\in \cup_i \mathcal{E}_i} -\frac{1}{2}\ln\frac{2\pi}{A_j} + \frac{1}{2}\left(C_j - \frac{B_j^2}{4A_j}\right).
+\end{align}
+Dropping the constant offsets, we find
+\begin{align}
+	\ln \bar{\mathcal{L}} = -\sum_{j\in \cup_i \mathcal{E}_i} \frac{1}{2}\left(C_j - \frac{B_j^2}{4A_j}\right).
+\end{align}
+This may be used to find the joint distribution of $\delta_i$, $f_i$, and $T_{c,i}$, at which point sampling may be used to determine the distributions of $X_{j,0}$.
+
+
+\end{document}
