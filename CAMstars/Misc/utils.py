@@ -24,7 +24,7 @@ def propagate_errors(func, x, dx, eps=1e-3):
 	dim = len(x)
 
 	var = 0
-	for i in dim:
+	for i in range(dim):
 		xNew = np.copy(x)
 
 		xNew[i] *= 1 + eps
