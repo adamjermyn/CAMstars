@@ -1,5 +1,5 @@
 import numpy as np
-from material import material
+from CAMstars.Material.material import material
 
 class population:
 	def __init__(self, materials):
