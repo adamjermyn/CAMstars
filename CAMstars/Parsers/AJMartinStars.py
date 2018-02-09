@@ -1,3 +1,4 @@
+import os
 from glob import glob
 from CAMstars.Material.material import material
 from CAMstars.Material.population import population
@@ -22,6 +23,7 @@ def parse(fname):
 
 	return material(name, names, logX, dlogX)
 
-files = glob('../../Data/Field Stars/AJMartin/*.csv')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+files = glob(dir_path + '/../../Data/Field Stars/AJMartin/*.csv')
 materials = list([parse(f) for f in files])
 AJMartinPop = population(materials)

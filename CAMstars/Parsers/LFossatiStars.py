@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from glob import glob
 from CAMstars.Material.material import material
@@ -32,6 +33,7 @@ def parse(fname):
 
 	return material(name, names, logX, dlogX)
 
-files = glob('../../Data/Field Stars/AJMartin/*.csv')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+files = glob(dir_path + '/../../Data/Field Stars/AJMartin/*.csv')
 materials = list([parse(f) for f in files])
 LFossatiPop = population(materials)

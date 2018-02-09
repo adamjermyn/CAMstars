@@ -1,3 +1,4 @@
+import os
 from glob import glob
 from CAMstars.Material.material import material
 
@@ -17,4 +18,5 @@ def parse(fname):
 
 	return material(name, names, logX, dlogX)
 
-sol = parse('../../Data/Field Stars/Sol.csv')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sol = parse(dir_path + '/../../Data/Field Stars/Sol.csv')
