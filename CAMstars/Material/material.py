@@ -1,6 +1,6 @@
 import numpy as np
 from CAMstars.Misc.utils import gaussianLogLike
-from condensation import condenseTemps
+from CAMstars.Parsers.condensation import condenseTemps
 
 # Store material properties
 class material:
