@@ -29,14 +29,20 @@ class population:
 		self.dlogX = np.zeros(len(self.species))
 		for i,s in enumerate(self.species):
 			mats = self.speciesDict[s]
-			lx, dlx = zip(*[m.query(s) for m in mats])
-			lx = np.array(lx)
-			dlx = np.array(dlx)
-			self.logX[i] = np.average(lx, weights=1/dlx**2)
-			self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
-			v1 = np.sum(1/dlx**2)
-			v2 = np.sum(1/dlx**4)
-			self.dlogX[i] /= (v1 - v2 / v1)
+			if len(mats) > 1:
+				lx, dlx = zip(*[m.query(s) for m in mats])
+				lx = np.array(lx)
+				dlx = np.array(dlx)
+				self.logX[i] = np.average(lx, weights=1/dlx**2)
+				self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
+				v1 = np.sum(1/dlx**2)
+				v2 = np.sum(1/dlx**4)
+				self.dlogX[i] /= (v1 - v2 / v1)
+			else:
+				# Otherwise there's no population to aggregate.
+				self.logX[i] = lx[0]
+				self.dlogX[i] = dlx[0]
+
 
 	def __add__(self, other):
 		'''
