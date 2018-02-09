@@ -1,3 +1,4 @@
+import os
 from glob import glob
 from CAMstars.Material.material import material
 from CAMstars.Material.population import population
@@ -10,14 +11,17 @@ def parse(fname):
 	dlogX = []
 
 	# Load bulk stellar properties
-	paramNames = ['T','dT','M','dM','R','dR','vrot','dvrot','logmdot','dlogmdotMinus','dlogMdotPlus']
 	params = {}
 	for i,line in enumerate(fi):
 		s = line.rstrip().split(' ')
-		s[0] = s[0][:-1]
-		params[s[0]] = float(s[1])
 		if 'Element' in line:
 			break
+		s[0] = s[0][:-1]
+		params[s[0]] = float(s[1])
+
+	# Calculate additional parameters
+	print(params)
+	params['dlogmdot'] = 0.5 * (params['dlogmdotMinus'] + params['dlogmdotPlus'])
 
 	# Load abundance data
 	for i,line in enumerate(fi):
@@ -29,6 +33,7 @@ def parse(fname):
 
 	return material(name, names, logX, dlogX, params=params)
 
-files = glob('../../Data/Accreting Stars/*.csv')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+files = glob(dir_path + '/../../Data/Accreting Stars/*.csv')
 materials = list([parse(f) for f in files])
 accretingPop = population(materials)
