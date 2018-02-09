@@ -20,7 +20,6 @@ def parse(fname):
 		params[s[0]] = float(s[1])
 
 	# Calculate additional parameters
-	print(params)
 	params['dlogmdot'] = 0.5 * (params['dlogmdotMinus'] + params['dlogmdotPlus'])
 
 	# Load abundance data
