@@ -8,7 +8,8 @@ vrot: 70
 dvrot: 4
 logmdot: -6.59
 dlogmdotMinus: 0
-dlogmdotPlus: 0Element,logX,dlogX
+dlogmdotPlus: 0
+Element,logX,dlogX
 He,-1.11737432111,0.15
 C,-3.41737432111,0.16
 N,-3.46737432111,0.4
