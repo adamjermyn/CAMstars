@@ -1,3 +1,14 @@
+T: 8190
+dT: 150
+M: 2.8
+dM: 0.5
+R: 4
+dR: 1
+vrot: 57.8
+dvrot: 1
+logmdot: -inf
+dlogmdotMinus: 0
+dlogmdotPlus: 0
 Element,logX,dlogX
 C,-3.60954474801,0.16
 O,-3.17954474801,0.1

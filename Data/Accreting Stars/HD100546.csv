@@ -1,3 +1,14 @@
+T: 10390
+dT: 600
+M: 2.3
+dM: 0.2
+R: 1.5
+dR: 0.3
+vrot: 64.9
+dvrot: 2.2
+logmdot: -7.04
+dlogmdotMinus: 0.13
+dlogmdotPlus: 0.15
 Element,logX,dlogX
 He,-1,0.12
 C,-3.68,0.2

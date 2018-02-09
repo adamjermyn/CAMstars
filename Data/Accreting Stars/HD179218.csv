@@ -1,4 +1,14 @@
-Element,logX,dlogX
+T: 9640
+dT: 250
+M: 3.1
+dM: 0.3
+R: 3.7
+dR: 0.6
+vrot: 70
+dvrot: 4
+logmdot: -6.59
+dlogmdotMinus: 0
+dlogmdotPlus: 0Element,logX,dlogX
 He,-1.11737432111,0.15
 C,-3.41737432111,0.16
 N,-3.46737432111,0.4

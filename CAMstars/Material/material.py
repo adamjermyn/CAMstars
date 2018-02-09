@@ -4,7 +4,7 @@ from condensation import condenseTemps
 
 # Store material properties
 class material:
-	def __init__(self, name, names, logX, dlogX):
+	def __init__(self, name, names, logX, dlogX, params=None):
 		'''
 		A material is a collection of mass fraction abundances of different
 		species along with uncertainties. In addition, helper methods are provided
@@ -16,6 +16,7 @@ class material:
 			names	-	The names of the species.
 			logX 	-	The log10 of the mass fraction abundances relative to hydrogen.
 			dlogX 	-	The uncertainty in logX, taken to be symmetric and gaussian.
+			params 	-	Auxiliary parameters.
 
 		Each argument is a list or numpy array, and they must be in corresponding order.
 
@@ -28,6 +29,11 @@ class material:
 		self.names = names
 		self.logX = logX
 		self.dlogX = dlogX
+
+		if params is None:
+			self.params = {}
+		else:
+			self.params = params
 
 		self.temps = np.array([condenseTemps[name] for name in self.names])
 

@@ -8,15 +8,26 @@ def parse(fname):
 	names = []
 	logX = []
 	dlogX = []
-	for i,line in enumerate(fi):
-		if i > 0:
-			s = line.rstrip().split(',')
-			if len(s) == 3:
-				names.append(s[0])
-				logX.append(float(s[1]))
-				dlogX.append(float(s[2]))
 
-	return material(name, names, logX, dlogX)
+	# Load bulk stellar properties
+	paramNames = ['T','dT','M','dM','R','dR','vrot','dvrot','logmdot','dlogmdotMinus','dlogMdotPlus']
+	params = {}
+	for i,line in enumerate(fi):
+		s = line.rstrip().split(' ')
+		s[0] = s[0][:-1]
+		params[s[0]] = float(s[1])
+		if 'Element' in line:
+			break
+
+	# Load abundance data
+	for i,line in enumerate(fi):
+		s = line.rstrip().split(',')
+		if len(s) == 3:
+			names.append(s[0])
+			logX.append(float(s[1]))
+			dlogX.append(float(s[2]))
+
+	return material(name, names, logX, dlogX, params=params)
 
 files = glob('../../Data/Accreting Stars/*.csv')
 materials = list([parse(f) for f in files])
