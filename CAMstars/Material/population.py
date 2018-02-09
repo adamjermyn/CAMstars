@@ -30,6 +30,8 @@ class population:
 		for i,s in enumerate(self.species):
 			mats = self.speciesDict[s]
 			lx, dlx = zip(*[m.query(s) for m in mats])
+			lx = np.array(lx)
+			dlx = np.array(dlx)
 			self.logX[i] = np.average(lx, weights=1/dlx**2)
 			self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
 			v1 = np.sum(1/dlx**2)
