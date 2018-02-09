@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from numpy import pi
 from scipy.optimize import newton
@@ -5,8 +6,9 @@ from scipy.optimize import newton
 import CAMstars.Parsers.opacity as opacity
 from CAMstars.Misc.constants import kB, mP, rSun, mSun, tSun, yr, newtonG, fSun, lSun, sigma
 
-opalName = '../../Data/Opacity/Opal/GS98.txt'
-fergName = '../../Data/Opacity/Ferguson/f05.gs98/'
+dir_path = os.path.dirname(os.path.realpath(__file__))
+opalName = dir_path + '/../../Data/Opacity/Opal/GS98.txt'
+fergName = dir_path + '/../../Data/Opacity/Ferguson/f05.gs98/'
 op = opacity.opac(opalName, fergName, 0.7, 0.28) # Solar composition
 
 def rhoFromPT(t, p, mu):
