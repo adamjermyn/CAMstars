@@ -40,8 +40,7 @@ class population:
 				self.dlogX[i] /= (v1 - v2 / v1)
 			else:
 				# Otherwise there's no population to aggregate.
-				self.logX[i] = lx[0]
-				self.dlogX[i] = dlx[0]
+				self.logX[i], self.dlogX[i] = mats[0].query(s)
 
 
 	def __add__(self, other):
