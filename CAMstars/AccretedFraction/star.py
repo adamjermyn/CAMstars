@@ -64,6 +64,9 @@ class star:
 		properties, most notably the findF method, which returns the expected
 		fraction of accreted material in the photosphere given the rotation rate of the
 		star and the accretion rate onto the star. 
+
+		Mass and radius must be given in solar units and
+		temperature must be given in Kelvin.
 		'''
 
 
