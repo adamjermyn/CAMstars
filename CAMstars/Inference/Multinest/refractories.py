@@ -38,11 +38,14 @@ def fraction(mass, radius, temperature, u_rot, logmdot):
 	# For this we assume that the accreted material is lighter than the stellar material
 	return s.findF(u_rot, mdot, gradient=False) 
 
+# Wrapper so the input is multidimensional
+frac = lambda x: fraction(*x)
+
 x = [(p.params['M'], p.params['R'], p.params['T'], p.params['vrot'], p.params['logmdot']) for p in accretingPop.materials]
 dx = [(p.params['dM'], p.params['dR'], p.params['dT'], p.params['dvrot'], p.params['dlogmdot']) for p in accretingPop.materials]
 
-f = [fraction(*y) for y in x]
-df = [propagate_errors(fraction, y, dy) for y,dy in zip(*(x, dx))]
+f = [frac(y) for y in x]
+df = [propagate_errors(frac, y, dy) for y,dy in zip(*(x, dx))]
 
 f = np.array(f)
 df = np.array(df)
