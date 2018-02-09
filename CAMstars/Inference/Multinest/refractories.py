@@ -19,7 +19,7 @@ from CAMstars.Parsers.LFossatiStars import LFossatiPop
 from CAMstars.AccretedFraction.star import star
 from CAMstars.Material.population import population
 from CAMstars.Misc.constants import mSun, yr
-from CAMstars.Misc.utils import propagate_errors
+from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Combine the field populations
 field = AJMartinPop + LFossatiPop
@@ -54,5 +54,55 @@ x = [(p.params['M'], p.params['R'], p.params['T'], p.params['vrot'], p.params['l
 # We're using the symmetric version of the Mdot errors here.
 dx = [(p.params['dM'], p.params['dR'], p.params['dT'], p.params['dvrot'], p.params['dlogmdot']) for p in accretingPop.materials]
 
-f = [frac(y) for y in x]
-df = [propagate_errors(frac, y, dy) for y,dy in zip(*(x, dx))]
+logf = [frac(y) for y in x]
+dlogf = [propagate_errors(frac, y, dy) for y,dy in zip(*(x, dx))]
+
+logf = np.array(logf)
+dlogf = np.array(dlogf)
+
+elements = accretingPop.species
+stars = accretingPop.materials
+
+diff = list([star.logX[i] - accretingPop.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
+var = list([accretingPop.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
+
+# The formalism has trouble with fixing some parameters but not others, so we assign an error of 0.01 to any logf's that have zero error.
+dlogf[dlogf == 0] += 0.01
+
+def probability(params):
+	nS = len(accretingPop)
+	logfAcc = params[:nS]
+	logd = params[nS:2*nS]
+	logfX = params[2*nS:]
+
+	fAcc = 10**logfAcc
+	fX = 10**logfX
+
+
+
+	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+
+	like = [[gaussianLogLike((q[i][j] - diff[i][j])**2/var[i][j]) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
+	like = sum(sum(l) for l in like)
+	like += np.sum(gaussianLogLike((logfAcc - logf) / dlogf))
+
+	return like
+
+oDir = '/Users/adamjermyn/Desktop/'
+oPref = 'Ref'
+parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$\log f_{\mathrm{' + e + '}}' for e in elements]
+ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(elements) * [(-8,0)]
+ndim = len(ranges)
+
+
+run(oDir, oPref, ranges, parameters, probability)
+a = analyze(oDir, oPref, oDir, oPref)
+plot1D(a, parameters, oDir, oPref)
+plot2D(a, parameters, oDir, oPref)
+
+
+
+
+
+
+
