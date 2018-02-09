@@ -34,6 +34,6 @@ def parse(fname):
 	return material(name, names, logX, dlogX)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-files = glob(dir_path + '/../../Data/Field Stars/AJMartin/*.csv')
+files = glob(dir_path + '/../../Data/Field Stars/LFossati/*.csv')
 materials = list([parse(f) for f in files])
 LFossatiPop = population(materials)
