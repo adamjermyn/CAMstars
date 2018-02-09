@@ -17,6 +17,7 @@ from CAMstars.Parsers.accretingStars import accretingPop
 from CAMstars.Parsers.AJMartinStars import AJMartinPop
 from CAMstars.Parsers.LFossatiStars import LFossatiPop
 from CAMstars.AccretedFraction.star import star
+from CAMstars.Material.population import population
 from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors
 
@@ -38,17 +39,20 @@ def fraction(mass, radius, temperature, u_rot, logmdot):
 	# For this we assume that the accreted material is lighter than the stellar material
 	return s.findF(u_rot, mdot, gradient=False) 
 
-# Wrapper so the input is multidimensional
-frac = lambda x: fraction(*x)
+# Wrapper so the input is multidimensional and the output is in log-space.
+def frac(x):
+	f0 = np.log10(fraction(*x))
+	if f0 > 0:
+		f0 = 0
+	return f0
+
+# Filter out stars with no known Mdot
+accretingPop = population([m for m in accretingPop.materials if np.isfinite(m.params['logmdot'])])
 
 x = [(p.params['M'], p.params['R'], p.params['T'], p.params['vrot'], p.params['logmdot']) for p in accretingPop.materials]
+
+# We're using the symmetric version of the Mdot errors here.
 dx = [(p.params['dM'], p.params['dR'], p.params['dT'], p.params['dvrot'], p.params['dlogmdot']) for p in accretingPop.materials]
 
 f = [frac(y) for y in x]
 df = [propagate_errors(frac, y, dy) for y,dy in zip(*(x, dx))]
-
-f = np.array(f)
-df = np.array(df)
-
-print(f)
-print(df)
