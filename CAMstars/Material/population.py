@@ -63,6 +63,16 @@ class population:
 		'''
 		return len(self.materials)
 
+	def queryStats(self, name):
+		'''
+		Returns the population mean and standard deviation for the specified species.
+		'''
+		if name in self.species:
+			ind = self.species.index(name)
+			return self.logX[ind], self.dlogX[ind]
+		else:
+			return None
+
 	def query(self, name):
 		'''
 		Returns a list of tuples, each of which contains the name of a
