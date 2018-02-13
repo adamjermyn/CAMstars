@@ -64,12 +64,12 @@ fAcc = 10**logf
 
 #elements = accretingPop.species
 
-elements = ['He','C','O','S','Fe','Mg','Si','Al','Ti','Sc']
+elements = ['He','C','O'] #,'S','Fe'] #,'Mg','Si','Al','Ti','Sc']
 
 stars = accretingPop.materials
 
-diff = list([star.logX[i] - field.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
-var = list([field.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
+diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
+var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
 def probability(params):
 	nS = len(accretingPop)
