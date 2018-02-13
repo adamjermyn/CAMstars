@@ -184,6 +184,7 @@ def plot2D(a, parameters, outputDirectory, outputPrefix):
 	n_params = len(parameters)
 	p = pymultinest.PlotMarginal(a)
 	values = a.get_equal_weighted_posterior()
+	s = a.get_stats()
 	modes = s['modes']
 
 	plt.figure(figsize=(5*n_params, 5*n_params))
