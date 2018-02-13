@@ -83,7 +83,7 @@ def probability(params):
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
-	like = [[gaussianLogLike((q[i][j] - diff[i][j])**2/var[i][j]) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
+	like = [[gaussianLogLike((q[i][j] - diff[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
 	like += np.sum(gaussianLogLike((logfAcc - logf) / dlogf))
 
