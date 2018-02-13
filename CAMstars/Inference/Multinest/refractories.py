@@ -73,7 +73,7 @@ var = list([field.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enum
 dlogf[dlogf == 0] += 0.01
 
 def probability(params):
-	nS = len(accretingPop)
+	nS = len(stars)
 	logfAcc = params[:nS]
 	logd = params[nS:2*nS]
 	logfX = params[2*nS:]
