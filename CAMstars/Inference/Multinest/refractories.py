@@ -64,7 +64,7 @@ dlogf = np.array(dlogf)
 elements = accretingPop.species
 stars = accretingPop.materials
 
-elements = elements[:5]
+elements = ['He','C','O','S','Sr','Fe','Mg','Si','Al','Ti','Sc']
 
 diff = list([star.logX[i] - field.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
@@ -76,10 +76,10 @@ def probability(params):
 	nS = len(stars)
 	logfAcc = params[:nS]
 	logd = params[nS:2*nS]
-	logfX = params[2*nS:]
+	fX = params[2*nS:]
 
 	fAcc = 10**logfAcc
-	fX = 10**logfX
+	fAcc[fAcc > 1] = 1
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
@@ -100,13 +100,19 @@ ndim = len(ranges)
 for i,p in enumerate(parameters):
 	print(i, p)
 
+run(oDir, oPref, ranges, parameters, probability)
+a, meds = analyze(oDir, oPref, oDir, oPref)
+
 # Plot abundances
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 nS = len(stars)
-logd = meds[:nS]
-fX = meds[nS:]
+logfAcc = meds[:nS]
+logd = meds[nS:2*nS]
+fX = meds[2*nS:]
+
+fAcc = 10**logfAcc
 
 model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
@@ -123,10 +129,6 @@ for i,star in enumerate(stars):
 	plt.savefig(oDir + '/' + star.name + '_model.pdf')
 	plt.clf()
 
-
-
-run(oDir, oPref, ranges, parameters, probability)
-a = analyze(oDir, oPref, oDir, oPref)
 plot1D(a, parameters, oDir, oPref)
 plot2D(a, parameters, oDir, oPref)
 
