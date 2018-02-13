@@ -165,7 +165,7 @@ def plot1D(a, parameters, outputDirectory, outputPrefix):
 		plt.close()
 	pp.close()
 
-def plot2D(a, parameters, outputDirectory, outputPrefix):
+def plot2D(a, parameters, outputDirectory, outputPrefix, nbins = 20):
 	'''
 	Helper function for plotting 2D distributions from PyMultiNest. 
 
@@ -175,6 +175,7 @@ def plot2D(a, parameters, outputDirectory, outputPrefix):
 		parameters		-	A list containing the names of all parameters.
 		outputDirectory	-	The directory in which to place output files.
 		outputPrefix	-	The prefix for all output file names.
+		nbins 			-	The number of bins to use when plotting. Default is 20.
 
 	There is no return value, as all output is written to files.
 	'''
@@ -209,7 +210,7 @@ def plot2D(a, parameters, outputDirectory, outputPrefix):
 		low1, high1 = m['1sigma']
 		#print(center, low1, high1)
 		newax.errorbar(x=center, y=y,
-			xerr=numpy.transpose([[center - low1, high1 - center]]), 
+			xerr=np.transpose([[center - low1, high1 - center]]), 
 			color='blue', linewidth=2, marker='s')
 		oldax.set_yticks([])
 		#newax.set_yticks([])
