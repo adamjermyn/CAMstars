@@ -124,6 +124,7 @@ def plot1D(a, parameters, outputDirectory, outputPrefix):
 	n_params = len(parameters)
 	p = pymultinest.PlotMarginal(a)
 	values = a.get_equal_weighted_posterior()
+	s = a.get_stats()
 	modes = s['modes']
 
 	pp = PdfPages(prefix + 'marg1d.pdf')
