@@ -113,11 +113,11 @@ outsn = [[e for e in m.names if e in elements] for m in stars]
 for i,star in enumerate(stars):
 	fig = plt.figure()
 	ax = fig.add_subplot(111)
-	ax.scatter(range(len(model[0])), model[0],c='b')
-	ax.errorbar(range(len(model[0])),outs[i],yerr=outsv[i], fmt='o',c='r')
-	ax.set(xticks=range(len(model[0])), xticklabels=outsn[i])
-	ax.set_ylabel('$\log [X] - \log [X]_\mathrm{solar}$')
-	plt.savefig(oDir + star.name + '_model.pdf')
+	ax.scatter(range(len(model[i])), model[i],c='b')
+	ax.errorbar(range(len(model[i])),outs[i],yerr=outsv[i], fmt='o',c='r')
+	ax.set(xticks=range(len(model[i])), xticklabels=outsn[i])
+	ax.set_ylabel('$\log [X]$')
+	plt.savefig(oDir + '/' + star.name + '_model.pdf')
 	plt.clf()
 
 plot1D(a, parameters, oDir, oPref)
