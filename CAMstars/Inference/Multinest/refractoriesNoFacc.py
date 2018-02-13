@@ -68,8 +68,8 @@ elements = ['He','C','O','S','Fe','Mg','Si','Al','Ti','Sc']
 
 stars = accretingPop.materials
 
-diff = list([star.logX[i] - accretingPop.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
-var = list([accretingPop.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
+diff = list([star.logX[i] - field.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
+var = list([field.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
 def probability(params):
 	nS = len(accretingPop)
@@ -78,7 +78,7 @@ def probability(params):
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
-	like = [[gaussianLogLike((q[i][j] - diff[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
+	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 
 	like = sum(sum(l) for l in like)
 
