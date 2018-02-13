@@ -64,7 +64,7 @@ fAcc = 10**logf
 
 #elements = accretingPop.species
 
-elements = ['He','C','O'] #,'S','Fe'] #,'Mg','Si','Al','Ti','Sc']
+elements = ['He','C','O','S','Fe','Mg','Si','Al','Ti','Sc']
 
 stars = accretingPop.materials
 
