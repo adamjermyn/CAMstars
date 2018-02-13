@@ -96,10 +96,33 @@ for i,p in enumerate(parameters):
 	print(i, p)
 
 run(oDir, oPref, ranges, parameters, probability)
-a = analyze(oDir, oPref, oDir, oPref)
+a, meds = analyze(oDir, oPref, oDir, oPref)
+
+# Plot abundances
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+
+nS = len(stars)
+logd = meds[:nS]
+fX = meds[nS:]
+
+model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
+outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
+outsn = [[e for e in m.names if e in elements] for m in stars]
+
+for i,star in enumerate(stars):
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	ax.scatter(range(len(model[0])), model[0],c='b')
+	ax.errorbar(range(len(model[0])),outs[i],yerr=outsv[i], fmt='o',c='r')
+	ax.set(xticks=range(len(model[0])), xticklabels=outsn[i])
+	ax.set_ylabel('$\log [X] - \log [X]_\mathrm{solar}$')
+	plt.savefig(oDir + star.name + '_model.pdf')
+	plt.clf()
+
 plot1D(a, parameters, oDir, oPref)
 plot2D(a, parameters, oDir, oPref)
-
 
 
 
