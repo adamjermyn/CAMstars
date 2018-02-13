@@ -12,6 +12,7 @@ to be fixed reference values.
 '''
 
 import numpy as np
+import os
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
 from CAMstars.Parsers.accretingStars import accretingPop
 from CAMstars.Parsers.AJMartinStars import AJMartinPop
@@ -63,6 +64,8 @@ dlogf = np.array(dlogf)
 elements = accretingPop.species
 stars = accretingPop.materials
 
+elements = elements[:15]
+
 diff = list([star.logX[i] - accretingPop.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([accretingPop.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
@@ -86,12 +89,12 @@ def probability(params):
 
 	return like
 
-oDir = '/Users/adamjermyn/Desktop/'
+dir_path = os.path.dirname(os.path.realpath(__file__))
+oDir = dir_path + '/../../../Output/Refractories/'
 oPref = 'Ref'
 parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$\log f_{\mathrm{' + e + '}}' for e in elements]
 ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(elements) * [(-8,0)]
 ndim = len(ranges)
-
 
 run(oDir, oPref, ranges, parameters, probability)
 a = analyze(oDir, oPref, oDir, oPref)
