@@ -93,9 +93,11 @@ def analyze(inputDirectory, inputPrefix, outputDirectory, outputPrefix):
 	print('  marginal likelihood:')
 	print('    ln Z = %.1f +- %.1f' % (s['global evidence'], s['global evidence error']))
 	print('  parameters:')
+	meds = []
 	for p, m in zip(parameters, s['marginals']):
 		lo, hi = m['1sigma']
 		med = m['median']
+		meds.append(med)
 		sigma = (hi - lo) / 2
 		print(sigma)
 		i = max(0, int(-np.floor(np.log10(sigma))) + 1)
@@ -103,7 +105,7 @@ def analyze(inputDirectory, inputPrefix, outputDirectory, outputPrefix):
 		fmts = '\t'.join(['    %-15s' + fmt + " +- " + fmt])
 		print(fmts % (p, med, sigma))
 
-	return a
+	return a, meds
 
 def plot1D(a, parameters, outputDirectory, outputPrefix):
 	'''
