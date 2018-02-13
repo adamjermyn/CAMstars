@@ -93,9 +93,12 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 oDir = dir_path + '/../../../Output/Refractories/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
-parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$\log f_{\mathrm{' + e + '}}$' for e in elements]
-ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(elements) * [(-8,0)]
+parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in elements]
+ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(elements) * [(0,1)]
 ndim = len(ranges)
+
+for i,p in enumerate(parameters):
+	print(i, p)
 
 run(oDir, oPref, ranges, parameters, probability)
 a = analyze(oDir, oPref, oDir, oPref)

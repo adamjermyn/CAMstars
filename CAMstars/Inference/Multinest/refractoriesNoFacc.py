@@ -63,9 +63,8 @@ logf = np.array(logf)
 fAcc = 10**logf
 
 elements = accretingPop.species
+elements = elements[:12]
 stars = accretingPop.materials
-
-elements = elements[:5]
 
 diff = list([star.logX[i] - accretingPop.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([accretingPop.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
@@ -73,9 +72,7 @@ var = list([accretingPop.dlogX[elements.index(e)]**2 + star.dlogX[i]**2 for i,e 
 def probability(params):
 	nS = len(accretingPop)
 	logd = params[:nS]
-	logfX = params[nS:]
-
-	fX = 10**logfX
+	fX = params[nS:]
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
@@ -88,9 +85,12 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 oDir = dir_path + '/../../../Output/RefractoriesNoFacc/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
-parameters = [s.name + ' $\log \delta$' for s in stars] + ['$\log f_{\mathrm{' + e + '}}$' for e in elements]
-ranges = len(stars) * [(-3,3)] + len(elements) * [(-8,0)]
+parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in elements]
+ranges = len(stars) * [(-3,3)] + len(elements) * [(0,1)]
 ndim = len(ranges)
+
+for i,p in enumerate(parameters):
+	print(i, p)
 
 run(oDir, oPref, ranges, parameters, probability)
 a = analyze(oDir, oPref, oDir, oPref)
