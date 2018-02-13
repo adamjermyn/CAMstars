@@ -62,8 +62,10 @@ logf = [frac(y) for y in x]
 logf = np.array(logf)
 fAcc = 10**logf
 
-elements = accretingPop.species
-elements = elements[:14]
+#elements = accretingPop.species
+
+elements = ['He','C','O','S','Fe','Mg','Si','Al','Ti','Sc']
+
 stars = accretingPop.materials
 
 diff = list([star.logX[i] - accretingPop.logX[elements.index(e)] for i,e in enumerate(star.names) if e in elements] for star in stars)
