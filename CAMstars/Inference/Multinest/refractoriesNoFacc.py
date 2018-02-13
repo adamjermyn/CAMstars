@@ -72,14 +72,13 @@ diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.nam
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
 def probability(params):
-	nS = len(accretingPop)
+	nS = len(stars)
 	logd = params[:nS]
 	fX = params[nS:]
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
-
 	like = sum(sum(l) for l in like)
 
 	return like
