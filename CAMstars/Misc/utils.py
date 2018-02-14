@@ -7,8 +7,7 @@ def gaussianLogLike(x):
 	# we just compute x as |y - y0|/(dy_right) for y > y0  and
 	# |y - y0|/(dy_left) for y < y0.
 
-	# Note that we neglect the prefactor because it is a constant.
-	return - x**2/2
+	return pref - x**2/2
 
 def propagate_errors(func, x, dx, eps=1e-3):
 	'''
