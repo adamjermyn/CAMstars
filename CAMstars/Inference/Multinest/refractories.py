@@ -112,7 +112,8 @@ logfAcc = meds[:nS]
 logd = meds[nS:2*nS]
 fX = meds[2*nS:]
 
-fAcc = 10**logfAcc
+fAcc = 10**np.array(logfAcc)
+fAcc[fAcc > 1] = 1
 
 model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
