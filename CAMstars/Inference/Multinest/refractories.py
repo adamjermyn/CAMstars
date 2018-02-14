@@ -64,7 +64,7 @@ dlogf = np.array(dlogf)
 elements = accretingPop.species
 stars = accretingPop.materials
 
-elements = ['He','C','O','S','Sr','Fe','Mg','Si','Al','Ti','Sc']
+elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Mn','Zn']
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
