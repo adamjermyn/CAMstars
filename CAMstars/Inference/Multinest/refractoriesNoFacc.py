@@ -76,7 +76,7 @@ def probability(params):
 	logd = params[:nS]
 	fX = params[nS:]
 
-	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
@@ -105,7 +105,7 @@ nS = len(stars)
 logd = meds[:nS]
 fX = meds[nS:]
 
-model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
 outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
 outsn = [[e for e in m.names if e in elements] for m in stars]

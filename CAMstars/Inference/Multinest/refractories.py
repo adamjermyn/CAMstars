@@ -64,7 +64,7 @@ dlogf = np.array(dlogf)
 elements = accretingPop.species
 stars = accretingPop.materials
 
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Mn','Zn']
+elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn','Zn','V','Na']
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
@@ -81,7 +81,7 @@ def probability(params):
 	fAcc = 10**logfAcc
 	fAcc[fAcc > 1] = 1
 
-	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
@@ -115,7 +115,7 @@ fX = meds[2*nS:]
 fAcc = 10**np.array(logfAcc)
 fAcc[fAcc > 1] = 1
 
-model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + np.exp(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
 outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
 outsn = [[e for e in m.names if e in elements] for m in stars]
