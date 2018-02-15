@@ -27,46 +27,16 @@ from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 # Combine the field populations
 field = AJMartinPop + LFossatiPop
 
-# Calculate accreted fractions
-def fraction(mass, radius, temperature, u_rot, logmdot):
-
-	# u_rot is vsini in km/s
-	# logmdot is non-dimensionalised by Msun/yr
-	# Now we convert these to C.G.S.
-
-	mdot = 10**(logmdot) * (mSun / yr)
-	u_rot *= 1e5
-
-	s = star(mass, radius, temperature)
-
-	# For this we assume that the accreted material is lighter than the stellar material
-	return s.findF(u_rot, mdot, gradient=False) 
-
-# Wrapper so the input is multidimensional and the output is in log-space.
-def frac(x):
-	f0 = np.log10(fraction(*x))
-	if f0 > 0:
-		f0 = 0
-	return f0
-
 # Filter out stars with no known Mdot
 accretingPop = population([m for m in accretingPop.materials if np.isfinite(m.params['logmdot'])])
-
-x = [(p.params['M'], p.params['R'], p.params['T'], p.params['vrot'], p.params['logmdot']) for p in accretingPop.materials]
-
-# We're using the symmetric version of the Mdot errors here.
-dx = [(p.params['dM'], p.params['dR'], p.params['dT'], p.params['dvrot'], p.params['dlogmdot']) for p in accretingPop.materials]
-
-logf = [frac(y) for y in x]
-
-logf = np.array(logf)
-fAcc = 10**logf
-
-#elements = accretingPop.species
-
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Ni','Mn','Zn','V','Na']
-
 stars = accretingPop.materials
+
+# Extract accreted fractions
+logf = np.array(list(s.params['logfAcc'] for s in stars))
+dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
+
+elements = accretingPop.species
+elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Ni','Mn','Zn','V','Na']
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
