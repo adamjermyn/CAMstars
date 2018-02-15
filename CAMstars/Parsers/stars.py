@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from glob import glob
 from CAMstars.Material.material import material
 from CAMstars.Material.population import population
@@ -13,17 +14,16 @@ def parse(fname):
 	# Load bulk stellar properties
 	params = {}
 	for i,line in enumerate(fi):
-		s = line.rstrip().split(' ')
 		if 'Element' in line:
 			break
-		s[0] = s[0][:-1]
+		ind = line.index(':')
+		s = (line[:ind], line[ind+1:].strip())
 		try:
 			params[s[0]] = float(s[1])
 		except ValueError:
 			params[s[0]] = s[1]
 
-	# Calculate additional parameters
-	params['dlogmdot'] = 0.5 * (params['dlogmdotMinus'] + params['dlogmdotPlus'])
+	print(params)
 
 	# Load abundance data
 	for i,line in enumerate(fi):
@@ -38,14 +38,19 @@ def parse(fname):
 	logX = np.array(logX)
 	dlogX = np.array(dlogX)
 
+	# Calculate additional parameters
+	if 'dlogmdotMinus' in params.keys() and 'dlogmdotPlus' in params.keys():
+		params['dlogmdot'] = 0.5 * (params['dlogmdotMinus'] + params['dlogmdotPlus'])
+
 	# Correct for different normalizations
+	print(name)
 	if params['Abundance Normalization'] == 'Ntot':
 		nH = 1 - sum(10**w for w in logX)
 		logX = logX - np.log10(nH)
 	elif params['Abundance Normalization'] == 'H12':
 		logX -= 12
 
-	# Correct for uncertainties
+	# Correct for systematic uncertainties
 	if 'General uncertainty' in params.keys():
 		dlogX = (dlogX**2 + params['General uncertainty']**2)**0.5
 
