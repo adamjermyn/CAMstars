@@ -27,7 +27,7 @@ from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 field = AJMartinPop + LFossatiPop
 
 # Filter out stars with no known Mdot
-accretingPop = population([m for m in accretingPop.materials if np.isfinite(m.params['logmdot'])])
+accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
 stars = accretingPop.materials
 
 # Extract accreted fractions
