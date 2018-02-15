@@ -106,13 +106,21 @@ class star:
 		# For iron (weight 55, 55/2 for singly-ionised) accreting into ionised hydrogen (1/2)
 		# this is 55.
 		d = self.dM + self.rotationalMixing(u_rot)
+
+		f = 0
+
 		if not gradient:
-			return (self.height**2 / d) * (mdot / self.photoMass)
+			f = (self.height**2 / d) * (mdot / self.photoMass)
 		else:
 			a = self.gradientMixing(weightRatio)
 			b = d
 			c = -self.height**2 * (mdot / self.photoMass)
-			return (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)	
+			f = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
+
+		if f > 1:
+			f = 1
+
+		return f
 
 	def rotationalMixing(self, u_rot):
 		eps = u_rot**2/(self.radius * self.gravity)
