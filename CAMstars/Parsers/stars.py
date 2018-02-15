@@ -23,8 +23,6 @@ def parse(fname):
 		except ValueError:
 			params[s[0]] = s[1]
 
-	print(params)
-
 	# Load abundance data
 	for i,line in enumerate(fi):
 		if 'References' in line:
@@ -43,7 +41,6 @@ def parse(fname):
 		params['dlogmdot'] = 0.5 * (params['dlogmdotMinus'] + params['dlogmdotPlus'])
 
 	# Correct for different normalizations
-	print(name)
 	if params['Abundance Normalization'] == 'Ntot':
 		nH = 1 - sum(10**w for w in logX)
 		logX = logX - np.log10(nH)
