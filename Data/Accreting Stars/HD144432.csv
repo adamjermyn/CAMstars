@@ -6,7 +6,9 @@ R: 2.6
 dR: 0.5
 vrot: 80.3
 dvrot: 1
-logmdot: -7.07
+logmdot: -7.74
+dlogmdotMinus: 0.11
+dlogmdotPlus: 0.09
 Abundance Normalization: Ntot
 Element,logX,dlogX
 C,-3.79,0.18
@@ -34,4 +36,4 @@ La,-11.2,0.4
 References:
 
 Folsom et al. 2012 unless otherwise specified.
-logmdot comes from Lopez et al. 2006
+logmdot, dlogmdotMinus, dlogmdotPlus come from Donehew and Brittain 2011
