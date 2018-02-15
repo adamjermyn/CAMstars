@@ -1,6 +1,34 @@
 import numpy as np
-from CAMstars.Misc.utils import gaussianLogLike
+from CAMstars.Misc.utils import gaussianLogLike, propagate_errors
 from CAMstars.Parsers.condensation import condenseTemps
+from CAMstars.AccretedFraction.star import star
+from CAMstars.Misc.constants import mSun, yr
+
+# For this we assume that the accreted material is lighter than the stellar material
+def fraction(mass, radius, temperature, u_rot, logmdot, gradient=False):
+	'''
+	Calculates the fraction of the material in a star's photosphere
+	which is due to accretion.
+
+	mass is in solar units
+	radius is in solar units
+	temperature is in K
+	u_rot is vsini in km/s
+	logmdot is non-dimensionalised by Msun/yr
+	'''
+
+	# Convert mdot and u_rot to C.G.S.
+	mdot = 10**(logmdot) * (mSun / yr)
+	u_rot *= 1e5
+
+	s = star(mass, radius, temperature)
+
+	f = s.findF(u_rot, mdot, gradient=gradient) 
+
+	return f
+
+def logfrac(x):
+	return np.log10(fraction(*x))
 
 # Store material properties
 class material:
@@ -31,9 +59,18 @@ class material:
 		self.dlogX = dlogX
 
 		if params is None:
-			self.params = {}
-		else:
-			self.params = params
+			params = {}
+		self.params = params
+
+		# If possible, calculated fraction of material arising from accretion.
+		if 'M' in params and 'R' in params and 'T' in params and 'vrot' in params and 'logmdot' in params:
+			w = (params['M'], params['R'], params['T'], params['vrot'], params['logmdot'])
+			self.params['logfAcc'] = logfrac(w)
+
+			# Calculate uncertainty in f
+			if 'dM' in params and 'dR' in params and 'T' in params and 'dvrot' in params and 'dlogmdot' in params:
+				dw = (params['dM'], params['dR'], params['dT'], params['dvrot'], params['dlogmdot'])
+				self.params['dlogfAcc'] = propagate_errors(logfrac, w, dw)
 
 		self.temps = np.array([condenseTemps[name] for name in self.names])
 
