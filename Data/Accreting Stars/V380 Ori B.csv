@@ -1,0 +1,20 @@
+Abundance Normalization: Ntot
+Element,logX,dlogX
+Na,-5.95,0.3
+Mg,-4.7,0.7
+Si,-4.44,0.26
+Ca,-5.78,0.4
+Ti,-6.78,0.28
+V,-7.5,0.79
+Cr,-5.92,0.26
+Mn,-5.97,0.43
+Fe,-4.25,0.16
+Co,-6.6,0.6
+Ni,-5.58,0.32
+Cu,-7.4,0.7
+Zn,-7.4,0.6
+Ba,-8.89,0.4
+
+References:
+
+Folsom et al. 2012 unless otherwise specified.
