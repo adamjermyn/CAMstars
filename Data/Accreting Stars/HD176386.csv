@@ -6,7 +6,7 @@ R: 2.2
 dR: 0.3
 vrot: 169
 dvrot: 1.5
-logmdot: -inf
+logmdot: -8.11
 dlogmdotMinus: 0
 dlogmdotPlus: 0
 Element,logX,dlogX
