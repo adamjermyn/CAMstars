@@ -6,9 +6,9 @@ R: 1.5
 dR: 0.3
 vrot: 64.9
 dvrot: 2.2
-logmdot: -7.04
+logmdot: -7.23
 dlogmdotMinus: 0.13
-dlogmdotPlus: 0.15
+dlogmdotPlus: 0.13
 Abundance Normalization: H0
 Element,logX,dlogX
 He,-1,0.12
@@ -29,5 +29,7 @@ Sr,-10.01,0.3
 Ba,-9.98,0.4
 
 References:
+
+All data are from Kama et al. 2018 unless otherwise specified.
 
 TODO!
