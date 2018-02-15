@@ -1,3 +1,4 @@
+Abundance Normalization: H0
 Element,logX/H,dlogX
 H,0,0
 He,-1.07,0.01
@@ -82,3 +83,7 @@ Pb,-10.25,0.1
 Bi,nan,nan
 Th,-11.98,0.1
 U,nan,nan
+
+References:
+
+Asplund et. al. 2009
