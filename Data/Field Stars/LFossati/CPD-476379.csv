@@ -1,4 +1,5 @@
 General uncertainty: 0.26
+Abundance Normalization: Ntot
 Element,logX,dlogX
 Mg,-4.10,0.28
 Si,-4.77,0.45

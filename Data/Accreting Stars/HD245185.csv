@@ -1,0 +1,28 @@
+T: 9500
+dT: 750
+M: 2.3
+dM: 0.2
+R: 1.9
+dR: 0.4
+vrot: 136
+dvrot: 10
+logmdot: -7.2
+dlogmdotMinus: 0
+dlogmdotPlus: 0
+Abundance Normalization: Ntot
+Element,logX,dlogX
+He,-0.9,0.3
+C,-3.72,0.15
+N,-3.8,0.4
+O,-3.17,0.17
+Mg,-5.39,0.23
+Al,-5.4,0.5
+Si,-4.95,0.16
+Ca,-6.12,0.25
+Sc,-9.6,0.7
+Ti,-7.93,0.38
+Cr,-7.27,0.34
+Mn,-7.0,0.6
+Fe,-5.27,0.33
+Ni,-6.5,0.7
+Ba,-10.0,0.7
