@@ -1,3 +1,11 @@
+T: 8500
+dT: 300
+M: 2.45
+dM: 0.15
+R: 3.1
+dR: 0.4
+vrot: 163
+dvrot: 11
 Abundance Normalization: Ntot
 Element,logX,dlogX
 He,-1.4,0.5

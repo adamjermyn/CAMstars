@@ -1,3 +1,11 @@
+T: 5800
+dT: 350
+M: 3.3
+dM: 0.8
+R: 6.4
+dR: 2.2
+vrot: 24.7
+dvrot: 1.9
 Abundance Normalization: Ntot
 Element,logX,dlogX
 Na,-5.95,0.3
