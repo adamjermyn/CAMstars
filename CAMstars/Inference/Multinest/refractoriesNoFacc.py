@@ -34,9 +34,9 @@ stars = accretingPop.materials
 # Extract accreted fractions
 logf = np.array(list(s.params['logfAcc'] for s in stars))
 dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
+fAcc = 10**logf
 
-elements = accretingPop.species
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Ni','Mn','Zn','V','Na']
+elements = list(e for e in accretingPop.species if e in field.species)
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)

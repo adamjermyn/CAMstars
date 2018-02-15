@@ -36,9 +36,9 @@ stars = accretingPop.materials
 logf = np.array(list(s.params['logfAcc'] for s in stars))
 dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
 
-elements = accretingPop.species
+elements = list(e for e in accretingPop.species if e in field.species)
 
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Ni','Mn','Zn','V','Na']
+#elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si','Al','Ti','Sc','Ni','Mn','Zn','V','Na']
 fixedElements = list(e for e in elements if condenseTemps[e] > 1500)
 freeElements = list(e for e in elements if condenseTemps[e] <= 1500)
 
