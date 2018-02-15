@@ -9,6 +9,7 @@ dvrot: 2.2
 logmdot: -7.04
 dlogmdotMinus: 0.13
 dlogmdotPlus: 0.15
+Abundance Normalization: H0
 Element,logX,dlogX
 He,-1,0.12
 C,-3.68,0.2
