@@ -6,9 +6,6 @@ R: 4.3
 dR: 0.3
 vrot: 20.9
 dvrot: 1.2
-logmdot: -inf
-dlogmdotMinus: 0
-dlogmdotPlus: 0
 Abundance Normalization: Ntot
 Element,logX,dlogX
 He,-0.91,0.14
@@ -32,4 +29,3 @@ Ni,-5.85,0.06
 References:
 
 Folsom et al. 2012 unless otherwise specified.
-
