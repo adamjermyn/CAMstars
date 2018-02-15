@@ -1,3 +1,7 @@
+T: 9900
+dT: 200
+vrot: 151.6
+dvrot: 0.2
 Abundance Normalization: H12
 Element,logX,dlogX
 C,8.91,0.02
@@ -8,3 +12,7 @@ Ca,6.92,0.02
 Ti,4.95,0.02
 Cr,5.78,0.02
 Fe,7.61,0.01
+
+References:
+
+AJ Martin et. al. 2017 unless otherwise noted

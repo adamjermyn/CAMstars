@@ -1,3 +1,7 @@
+T: 6200
+dT: 200
+vrot: 49.5
+dvrot: 1.0
 Abundance Normalization: H12
 Element,logX,dlogX
 Na,6.37,0.21
@@ -13,3 +17,7 @@ Fe,7.70,0.09
 Ni,6.44,0.11
 Zn,4.62,0.88
 Ba,2.20,0.41
+
+References:
+
+AJ Martin et. al. 2017 unless otherwise noted

@@ -1,4 +1,12 @@
+T: 19800
+dT: 200
+vrot: 198.9
+dvrot: 12.7
 Abundance Normalization: H12
 Element,logX,dlogX
 Si,8.07,0.95
 Fe,7.67,0.47
+
+References:
+
+AJ Martin et. al. 2017 unless otherwise noted

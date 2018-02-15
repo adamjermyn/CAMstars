@@ -1,3 +1,7 @@
+T: 7600
+dT: 200
+vrot: 54.1
+dvrot: 0.7
 Abundance Normalization: H12
 Element,logX,dlogX
 C,8.63,0.11
@@ -10,3 +14,7 @@ Cr,5.95,0.07
 Mn,5.63,0.23
 Fe,7.74,0.05
 Ni,6.16,0.11
+
+References:
+
+AJ Martin et. al. 2017 unless otherwise noted

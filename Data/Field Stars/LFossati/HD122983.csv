@@ -1,3 +1,7 @@
+T: 10700
+dT: 300
+vrot: 35
+dvrot: 3
 General uncertainty: 0.20
 Abundance Normalization: Ntot
 Element,logX,dlogX
@@ -14,3 +18,6 @@ Ba,-8.64,0.01
 Pr,-7.57,0.20
 Nd,-7.43,0.10
 
+References:
+
+L Fossati et al. 2011 unless otherwise specified

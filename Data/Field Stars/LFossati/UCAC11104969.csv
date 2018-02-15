@@ -1,3 +1,7 @@
+T: 7050
+dT: 150
+vrot: 260
+dvrot: 15
 General uncertainty: 0.30
 Abundance Normalization: Ntot
 Element,logX,dlogX
@@ -13,3 +17,7 @@ Fe,-4.62,0.05
 Ni,-5.65,0.65
 Y,-8.64,0.03
 Ba,-8.55,0
+
+References:
+
+L Fossati et al. 2011 unless otherwise specified

@@ -1,3 +1,7 @@
+T: 10300
+dT: 200
+vrot: 113
+dvrot: 3
 General uncertainty: 0.25
 Abundance Normalization: Ntot
 Element,logX,dlogX
@@ -7,3 +11,7 @@ Si,-4.52,0.17
 Ti,-7.07,0.13
 Cr,-6.16,0.09
 Fe,-4.27,0.17
+
+References:
+
+L Fossati et al. 2011 unless otherwise specified
