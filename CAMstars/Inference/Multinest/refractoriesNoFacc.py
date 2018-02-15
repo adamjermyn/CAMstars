@@ -16,10 +16,7 @@ In this inference problem we hold f_i fixed at their mean values.
 import numpy as np
 import os
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
-from CAMstars.Parsers.accretingStars import accretingPop
-from CAMstars.Parsers.AJMartinStars import AJMartinPop
-from CAMstars.Parsers.LFossatiStars import LFossatiPop
-from CAMstars.Parsers.sol import sol
+from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.AccretedFraction.star import star
 from CAMstars.Material.population import population
