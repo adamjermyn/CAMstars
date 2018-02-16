@@ -24,7 +24,7 @@ from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Combine the field populations
-field = AJMartinPop + LFossatiPop
+field = population([sol])
 
 # Filter out stars with no known Mdot
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
@@ -49,7 +49,7 @@ def indicator(x):
 		return None
 
 fixedElements = {e:indicator(condenseTemps[e]) for e in elements}
-freeElements = list(e for e in elements if fixedElements[e] is None)
+freeElements = list(e for e in elements if condenseTemps[e] <= 1500)
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
@@ -78,7 +78,7 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../Output/RefractoriesFixedFX/'
+oDir = dir_path + '/../../../Output/RefractoriesFixedFXsol/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
 parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
