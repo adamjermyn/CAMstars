@@ -24,7 +24,7 @@ from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Combine the field populations
-field = AJMartinPop + LFossatiPop
+field = population([sol])
 
 # Filter out stars with no known Mdot
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
@@ -57,7 +57,7 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../Output/RefractoriesNoFacc/'
+oDir = dir_path + '/../../../../Output/RefractoriesNoFaccSol/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
 parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in elements]

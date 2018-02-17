@@ -24,7 +24,7 @@ from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Combine the field populations
-field = population([sol])
+field = AJMartinPop + LFossatiPop
 
 # Filter out stars with no known Mdot
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
@@ -41,17 +41,6 @@ elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn'
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
 
-def indicator(x):
-	if x > 1000:
-		return 1
-	elif x < 200:
-		return 0
-	else:
-		return None
-
-fixedElements = {e:indicator(condenseTemps[e]) for e in elements}
-freeElements = list(e for e in elements if fixedElements[e] is None)
-
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
@@ -59,9 +48,6 @@ def probability(params):
 	nS = len(stars)
 	logd = params[:nS]
 	fX = params[nS:]
-
-	# Expand fX to include fixed elements
-	fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
@@ -71,11 +57,11 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../Output/RefractoriesNoFaccFixedFXSol/'
+oDir = dir_path + '/../../../../Output/RefractoriesNoFacc/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
-parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
-ranges = len(stars) * [(-3,3)] + len(freeElements) * [(0,1)]
+parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in elements]
+ranges = len(stars) * [(-3,3)] + len(elements) * [(0,1)]
 ndim = len(ranges)
 
 for i,p in enumerate(parameters):
@@ -91,8 +77,6 @@ plt.style.use('ggplot')
 nS = len(stars)
 logd = meds[:nS]
 fX = meds[nS:]
-# Expand fX to include fixed elements
-fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
 solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]

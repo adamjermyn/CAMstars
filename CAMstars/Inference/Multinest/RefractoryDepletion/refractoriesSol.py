@@ -9,8 +9,6 @@ X_i = X_t ((1-f_i) + f ((1 - f_X) + f_X delta_{d,*})),
 where f_i are the photospheric fractions of the stars, f_X are the refractory fractions,
 and delta_{d,*} are the enhancement/depletion fractions for the star. X_t are taken
 to be fixed reference values.
-
-In this inference problem we hold f_X = 1 for all X with condensation temperatures above 1500K.
 '''
 
 import numpy as np
@@ -40,17 +38,6 @@ elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn'
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
 
-def indicator(x):
-	if x > 1000:
-		return 1
-	elif x < 200:
-		return 0
-	else:
-		return None
-
-fixedElements = {e:indicator(condenseTemps[e]) for e in elements}
-freeElements = list(e for e in elements if condenseTemps[e] <= 1500)
-
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
@@ -62,9 +49,6 @@ def probability(params):
 	logfAcc = params[:nS]
 	logd = params[nS:2*nS]
 	fX = params[2*nS:]
-
-	# Expand fX to include fixed elements
-	fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
 	fAcc = 10**logfAcc
 	fAcc[fAcc > 1] = 1
@@ -78,11 +62,11 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../Output/RefractoriesFixedFXsol/'
+oDir = dir_path + '/../../../../Output/RefractoriesSol/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
-parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
-ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(freeElements) * [(0,1)]
+parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in elements]
+ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(elements) * [(0,1)]
 ndim = len(ranges)
 
 for i,p in enumerate(parameters):
@@ -99,8 +83,6 @@ nS = len(stars)
 logfAcc = meds[:nS]
 logd = meds[nS:2*nS]
 fX = meds[2*nS:]
-# Expand fX to include fixed elements
-fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
 fAcc = 10**np.array(logfAcc)
 fAcc[fAcc > 1] = 1
@@ -138,7 +120,6 @@ for i,star in enumerate(stars):
 	ax.set_ylabel('Residuals')
 	plt.savefig(oDir + '/' + star.name + '_model.pdf')
 	plt.clf()
-
 
 plot1D(a, parameters, oDir, oPref)
 plot2D(a, parameters, oDir, oPref)
