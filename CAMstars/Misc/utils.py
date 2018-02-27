@@ -9,6 +9,7 @@ def gaussianLogLike(x):
 
 	return pref - x**2/2
 
+# For propagating errors
 def propagate_errors(func, x, dx, eps=1e-3):
 	'''
 	The arguments are:
@@ -28,14 +29,13 @@ def propagate_errors(func, x, dx, eps=1e-3):
 	for i in range(dim):
 		xNew = np.copy(x)
 
-		xNew[i] *= 1 + eps
+		xNew[i] += eps
 		f1 = func(xNew)
-		xNew[i] /= 1 + eps
-		xNew[i] *= 1 - eps
+		xNew[i] -= 2*eps
 		f2 = func(xNew)
 
-		df = (f1 - f2) / 2
+		df = (f1 - f2) / (2 * eps)
 
 		var += (dx[i] * df)**2
 
-	return var
+	return var**0.5
