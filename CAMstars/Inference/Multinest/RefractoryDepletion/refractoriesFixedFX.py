@@ -88,6 +88,9 @@ ndim = len(ranges)
 for i,p in enumerate(parameters):
 	print(i, p)
 
+print(elements)
+print(freeElements)
+
 run(oDir, oPref, ranges, parameters, probability)
 a, meds = analyze(oDir, oPref, oDir, oPref)
 
