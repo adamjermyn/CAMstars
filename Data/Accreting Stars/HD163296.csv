@@ -9,6 +9,10 @@ dvrot: 3
 logmdot: -7.49
 dlogmdotMinus: 0.14
 dlogmdotPlus: 0.3
+Meu: 20
+f30f135: 2
+df30f135: 0.1
+fNIR: 13.8
 Abundance Normalization: Ntot
 Element,logX,dlogX
 C,-3.82,0.25
@@ -30,3 +34,5 @@ References:
 
 Folsom et al. 2012 unless otherwise specified.
 logmdot, dlogmdotMinus, dlogmdotPlus come from Fairlamb et al. 2015
+f30f135, df30f135, Meu come from Maaskant et al. 2014.
+fNIR comes from Banzatti et al. 2018.
