@@ -143,9 +143,7 @@ for i,star in enumerate(stars):
 plot1D(a, parameters, oDir, oPref)
 plot2D(a, parameters, oDir, oPref)
 
-
-
-
-
+import pickle
+pickle.dump(a, open(oDir+'/' + 'analyzer.pickle','wb'))
 
 
