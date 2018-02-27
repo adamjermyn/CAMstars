@@ -10,7 +10,8 @@ where f_i are the photospheric fractions of the stars, f_X are the refractory fr
 and delta_{d,*} are the enhancement/depletion fractions for the star. X_t are taken
 to be fixed reference values.
 
-In this inference problem we hold f_X = 1 for all X with condensation temperatures above 1500K.
+In this inference problem we hold f_X = 1 for all X with condensation temperatures above 1000K
+and f_X = 0 for those with T_c < 200K.
 '''
 
 import numpy as np
@@ -34,8 +35,7 @@ stars = accretingPop.materials
 logf = np.array(list(s.params['logfAcc'] for s in stars))
 dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
 
-#elements = list(e for e in accretingPop.species if e in field.species)
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn','Zn','V','Na']
+elements = list(e for e in accretingPop.species if e in field.species)
 
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
