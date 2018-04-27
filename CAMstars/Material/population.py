@@ -18,13 +18,8 @@ class population:
 
 		# We want to calculate the mean and standard deviation for the population.
 		# These are stored in numpy arrays indexed in the same order as species.
-		# For the mean we weight measurements by the reciprocal of their variance.
-		# For the variance we use the relaibility-weighted unbiased estimator, given by
-		# sum_i (x_i - mu)^2 / dx_i^2 / (V_1 - V_2 / V_1),
-		# where mu is the estimated mean, V_1 = sum_i 1/dx_i^2, and V_2 = sum_i 1/dx_i^4.
-		# This is as per the GSL Manual: https://www.gnu.org/software/gsl/manual/html_node/Weighted-Samples.html
-		# Note that these aggregates are only meaningful if the materials of interest were
-		# truly drawn from the same population.
+		# We do this in an unweighted way because the weighted calculations tend to
+		# give enormous weight to individual stars with (possibly) understated uncertainties.
 		self.logX = np.zeros(len(self.species))
 		self.dlogX = np.zeros(len(self.species))
 		for i,s in enumerate(self.species):
@@ -33,13 +28,8 @@ class population:
 				lx, dlx = zip(*[m.query(s) for m in mats])
 				lx = np.array(lx)
 				dlx = np.array(dlx)
-#				self.logX[i] = np.average(lx, weights=1/dlx**2)
 				self.logX[i] = np.average(lx)
 				self.dlogX[i] = np.average((lx - self.logX[i])**2)
-#				self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
-#				v1 = np.sum(1/dlx**2)
-#				v2 = np.sum(1/dlx**4)
-#				self.dlogX[i] /= (v1 - v2 / v1)
 			else:
 				# Otherwise there's no population to aggregate.
 				self.logX[i], self.dlogX[i] = mats[0].query(s)
