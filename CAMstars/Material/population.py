@@ -35,10 +35,11 @@ class population:
 				dlx = np.array(dlx)
 #				self.logX[i] = np.average(lx, weights=1/dlx**2)
 				self.logX[i] = np.average(lx)
-				self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
-				v1 = np.sum(1/dlx**2)
-				v2 = np.sum(1/dlx**4)
-				self.dlogX[i] /= (v1 - v2 / v1)
+				self.dlogX[i] = np.average((lx - self.logX[i])**2)
+#				self.dlogX[i] = np.average((lx - self.logX[i])**2, weights=1/dlx**2)
+#				v1 = np.sum(1/dlx**2)
+#				v2 = np.sum(1/dlx**4)
+#				self.dlogX[i] /= (v1 - v2 / v1)
 			else:
 				# Otherwise there's no population to aggregate.
 				self.logX[i], self.dlogX[i] = mats[0].query(s)
