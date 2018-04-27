@@ -41,7 +41,7 @@ for m in field.materials:
 		field.materials.remove(m)
 for m in accretingPop.materials:
 	if m.name in exclude_Temp:
-		field.materials.remove(m)
+		accretingPop.materials.remove(m)
 
 exclude_S = [
 'HD31648',
@@ -55,20 +55,20 @@ exclude_S = [
 ]
 
 for m in field.materials:
-	if m.name in exclude_Sulfur:
+	if m.name in exclude_S:
 		ind = m.queryIndex('S')
-		if ind is not None:
+		if ind is not None:			
 			m.names.pop(ind)
-			m.logX.pop(ind)
-			m.dlogX.pop(ind)
+			np.delete(m.logX, ind)
+			np.delete(m.dlogX, ind)
 
 for m in accretingPop.materials:
-	if m.name in exclude_Sulfur:
+	if m.name in exclude_S:
 		ind = m.queryIndex('S')
 		if ind is not None:
 			m.names.pop(ind)
-			m.logX.pop(ind)
-			m.dlogX.pop(ind)
+			np.delete(m.logX, ind)
+			np.delete(m.dlogX, ind)
 
 exclude_Zn = [
 'UCAC11105106',
@@ -82,18 +82,18 @@ for m in accretingPop.materials:
 			ind = m.queryIndex('Zn')
 			if ind is not None:
 				m.names.pop(ind)
-				m.logX.pop(ind)
-				m.dlogX.pop(ind)
+				np.delete(m.logX, ind)
+				np.delete(m.dlogX, ind)
 
 for m in field.materials:
 	if m.name in exclude_Zn:
 		ind = m.queryIndex('Zn')
 		if ind is not None:		
 			m.names.pop(ind)
-			m.logX.pop(ind)
-			m.dlogX.pop(ind)
+			np.delete(m.logX, ind)
+			np.delete(m.dlogX, ind)
 
-include_Na [
+include_Na = [
 'HD139614',
 'HD144432'
 ]
@@ -103,8 +103,8 @@ for m in accretingPop.materials:
 		ind = m.queryIndex('Na')
 		if ind is not None:
 			m.names.pop(ind)
-			m.logX.pop(ind)
-			m.dlogX.pop(ind)
+			np.delete(m.logX, ind)
+			np.delete(m.dlogX, ind)
 
 field = population(field.materials)
 accretingPop = population(accretingPop.materials)
@@ -117,8 +117,8 @@ stars = accretingPop.materials
 logf = np.array(list(s.params['logfAcc'] for s in stars))
 dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
 
-#elements = list(e for e in accretingPop.species if e in field.species)
-elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn','Zn','V','Na']
+elements = list(e for e in accretingPop.species if e in field.species)
+#elements = ['He','C','O','S','Ca','Sr','Fe','Mg','Si']#,'Al','Ti','Sc','Ni','Mn','Zn','V','Na']
 
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
