@@ -2,7 +2,7 @@ import numpy as np
 from CAMstars.Misc.utils import gaussianLogLike, propagate_errors
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.AccretedFraction.star import star
-from CAMstars.Misc.constants import mSun, yr
+from CAMstars.Misc.constants import mSun, yr, gSun
 
 # For this we assume that the accreted material is lighter than the stellar material
 def fraction(mass, radius, temperature, u_rot, logmdot, gradient=False):
@@ -62,7 +62,17 @@ class material:
 			params = {}
 		self.params = params
 
-		# If possible, calculated fraction of material arising from accretion.
+		# If possible, calculate logg
+		if 'M' in params and 'R' in params:
+			gcalc = lambda x: np.log10(gSun * x[0] / x[1]**2)
+			w = (params['M'], params['R'])
+			self.params['logg'] = gcalc(w)
+
+			if 'dM' in params and 'dR' in params:
+				dw = (params['dM'], params['dR'])
+				self.params['dlogg'] = propagate_errors(gcalc, w, dw)
+
+		# If possible, calculate fraction of material arising from accretion.
 		if 'M' in params and 'R' in params and 'T' in params and 'vrot' in params and 'logmdot' in params:
 			w = (params['M'], params['R'], params['T'], params['vrot'], params['logmdot'])
 			self.params['logfAcc'] = logfrac(w)
@@ -81,7 +91,7 @@ class material:
 		'''
 
 		try:
-			i = self.names.index(name)
+			i = next(i for i,v in enumerate(self.names) if v.lower() == name.lower()) # Case-insensitive search
 			return self.logX[i], self.dlogX[i]
 		except ValueError:
 			return None
@@ -92,7 +102,7 @@ class material:
 		'''
 		
 		try:
-			i = self.names.index(name)
+			i = next(i for i,v in enumerate(self.names) if v.lower() == name.lower()) # Case-insensitive search
 			return i
 		except ValueError:
 			return None
