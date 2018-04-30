@@ -10,6 +10,7 @@ mSun    = 1.9988435e33   		# g              Solar Mass
 rSun    = 6.96e10        		# cm             Solar Radius
 lSun    = 3.846e33       		# erg/s          Solar Luminosity
 fSun	= lSun / (4*pi*rSun**2)		# erg/cm^2/s	 Solar surface flux
+gSun    = newtonG * mSun / rSun**2 # cm/s^2		Solar surface gravity
 kappaG  = 1000.         		# g/cm^2         Gamma ray opacity
 yr	= 365.254*24*3600		# s		  Seconds in a year
 tSun	= 5770.		 		# K		  Stellar photosphere temperature
