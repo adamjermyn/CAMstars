@@ -16,16 +16,57 @@ and f_X = 0 for those with T_c < 200K.
 
 import numpy as np
 import os
+import h5py
+from scipy.interpolate import RegularGridInterpolator as rgi
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
 from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.AccretedFraction.star import star
 from CAMstars.Material.population import population
+from CAMstars.Material.material import material
 from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
-# Combine the field populations
-field = AJMartinPop + LFossatiPop
+# Load reference data
+hdpref = '/Users/adamjermyn/Dropbox/Research/GasDustInference/Machine Learning/'
+fi = h5py.File(hdpref + 'table.hdf','r')
+output = np.array(fi['chemistry'])
+output_d = np.array(fi['d_chemistry'])
+
+print(np.min(output))
+
+teff = np.array(fi['gridT'])
+logg = np.array(fi['gridG'])
+vsini = np.array(fi['gridV'])
+
+# Load reference elements
+fi = open(hdpref + 'elems.txt','r')
+line = fi.readline()
+line = line.split(',')
+refElems = line[:-1]
+for i in range(len(refElems)):
+	# Make reference element names into standard format
+	if len(refElems[i]) == 1:
+		refElems[i] = refElems[i].upper()
+	else:
+		refElems[i] = refElems[i][0].upper() + refElems[i][1]
+
+# Construct interpolator
+reg = rgi((teff, logg, vsini), output, method='nearest', bounds_error=False, fill_value=None)
+dreg = rgi((teff, logg, vsini), output_d, method='nearest', bounds_error=False, fill_value=None)
+
+
+def buildReference(t, g, v):
+	# Constructs a reference given a star
+	abundances = reg((t,g,v))
+	dabundances = dreg((t,g,v))
+
+	for i,e in enumerate(refElems):
+		abundances[i] += sol.query(e)[0]
+		dabundances[i] = (dabundances[i]**2 + sol.query(e)[1]**2)**0.5
+
+	mat = material('Reference',refElems,abundances,dabundances)
+	return mat
 
 # Exclude elements that have unreliable error estimates
 
@@ -39,14 +80,12 @@ exclude_Temp = [
 'V380 Ori B'
 ]
 
-for m in field.materials:
-	if m.name in exclude_Temp:
-		field.materials.remove(m)
 for m in accretingPop.materials:
 	if m.name in exclude_Temp:
 		accretingPop.materials.remove(m)
 
 exclude_S = [
+'HD100546',
 'HD31648',
 'HD36112',
 'HD68695',
@@ -54,16 +93,9 @@ exclude_S = [
 'HD244604',
 'HD123269',
 'UCAC11105213',
-'UCAC11105379'
+'UCAC11105379',
+'T Ori'
 ]
-
-for m in field.materials:
-	if m.name in exclude_S:
-		ind = m.queryIndex('S')
-		if ind is not None:			
-			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
 
 for m in accretingPop.materials:
 	if m.name in exclude_S:
@@ -88,14 +120,6 @@ for m in accretingPop.materials:
 				np.delete(m.logX, ind)
 				np.delete(m.dlogX, ind)
 
-for m in field.materials:
-	if m.name in exclude_Zn:
-		ind = m.queryIndex('Zn')
-		if ind is not None:		
-			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
-
 include_Na = [
 'HD139614',
 'HD144432'
@@ -109,18 +133,20 @@ for m in accretingPop.materials:
 			np.delete(m.logX, ind)
 			np.delete(m.dlogX, ind)
 
-field = population(field.materials)
 accretingPop = population(accretingPop.materials)
 
 # Filter out stars with no known Mdot
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
 stars = accretingPop.materials
 
+# Construct baselines
+fields = list([buildReference(s.params['T'], s.params['logg'], s.params['vrot']) for s in accretingPop.materials])
+
 # Extract accreted fractions
 logf = np.array(list(s.params['logfAcc'] for s in stars))
 dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
 
-elements = list(e for e in accretingPop.species if e in field.species)
+elements = list(e for e in accretingPop.species if e in fields[0].names)
 
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
@@ -136,8 +162,8 @@ def indicator(x):
 fixedElements = {e:indicator(condenseTemps[e]) for e in elements}
 freeElements = list(e for e in elements if fixedElements[e] is None)
 
-diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
-var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
+diff = list([star.logX[i] - fields[j].query(e)[0] for i,e in enumerate(star.names) if e in elements] for j,star in enumerate(stars))
+var = list([fields[j].query(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for j,star in enumerate(stars))
 
 # The formalism has trouble with fixing some parameters but not others, so we assign an error of 0.01 to any logf's that have zero error.
 dlogf[dlogf == 0] += 0.01
@@ -195,9 +221,9 @@ fAcc[fAcc > 1] = 1
 
 solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
-refs = [[field.queryStats(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
-refsv = [[field.queryStats(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
-model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+refs = [[fields[i].query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
+refsv = [[fields[i].query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
+model = [[fields[i].query(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
 outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
 outsn = [[e for e in m.names if e in elements] for m in stars]

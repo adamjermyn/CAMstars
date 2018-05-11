@@ -30,32 +30,42 @@ from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 # Load reference data
 hdpref = '/Users/adamjermyn/Dropbox/Research/GasDustInference/Machine Learning/'
 fi = h5py.File(hdpref + 'table.hdf','r')
-ranges = np.array(fi['ranges'])
 output = np.array(fi['chemistry'])
+output_d = np.array(fi['d_chemistry'])
+
+print(np.min(output))
 
 teff = np.array(fi['gridT'])
 logg = np.array(fi['gridG'])
 vsini = np.array(fi['gridV'])
-teff *= ranges[0]
-logg *= ranges[1]
-vsini *= ranges[2]
 
+# Load reference elements
 fi = open(hdpref + 'elems.txt','r')
 line = fi.readline()
 line = line.split(',')
 refElems = line[:-1]
-reg = rgi((teff, logg, vsini), output, method='linear', bounds_error=False)
+for i in range(len(refElems)):
+	# Make reference element names into standard format
+	if len(refElems[i]) == 1:
+		refElems[i] = refElems[i].upper()
+	else:
+		refElems[i] = refElems[i][0].upper() + refElems[i][1]
+
+# Construct interpolator
+reg = rgi((teff, logg, vsini), output, method='nearest', bounds_error=False, fill_value=None)
+dreg = rgi((teff, logg, vsini), output_d, method='nearest', bounds_error=False, fill_value=None)
 
 
 def buildReference(t, g, v):
 	# Constructs a reference given a star
 	abundances = reg((t,g,v))
+	dabundances = dreg((t,g,v))
 
-	for e in refElems:
-		print(e)
-		abundances += sol.query(e)[0]
+	for i,e in enumerate(refElems):
+		abundances[i] += sol.query(e)[0]
+		dabundances[i] = (dabundances[i]**2 + sol.query(e)[1]**2)**0.5
 
-	mat = material('Reference',refElems,abundances,0*abundances) # Replace uncertainty with estimate from NN scatter
+	mat = material('Reference',refElems,abundances,dabundances)
 	return mat
 
 def fElements(e):
@@ -111,11 +121,9 @@ def infer(s):
 		if fAcc > 1:
 			fAcc = 1
 
-		print(elements.index(e))
-
 		q = [np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in s.names if e in elements]
 
-		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q[i]))]
+		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q))]
 		like = sum(like)
 		like += gaussianLogLike((logfAcc - logf) / dlogf)
 
@@ -125,7 +133,7 @@ def infer(s):
 	oDir = dir_path + '/../../../../Output/GasDust_' + s.name + '/'
 	oDir = os.path.abspath(oDir)
 	oPref = 'Ref'
-	parameters = ['$\log f$','$\log \delta']
+	parameters = ['$\log f$','$\log \delta$']
 	ranges = [(logf - 3 * dlogf, min(0, logf + 3*dlogf)), (-3,3)]
 	ndim = len(ranges)
 
@@ -143,17 +151,15 @@ def infer(s):
 	logfAcc = meds[0]
 	logd = meds[1]
 
-	# Expand fX to include fixed elements
-	fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
-
 	fAcc = 10**np.array(logfAcc)
-	fAcc[fAcc > 1] = 1
+	if fAcc > 1:
+		fAcc = 1
 
-	refX = [reference.query(e)[0] for e in elements]
-	refV = [reference.query(e)[1] for e in elements]
-	model = [reference.query(e)[0] + np.log(1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)]) for e in elements]
-	outX = [s.query(e)[0] for e in elements]
-	outV = [s.query(e)[1] for e in elements]
+	refX = np.array([reference.query(e)[0] for e in elements])
+	refV = np.array([reference.query(e)[1] for e in elements])
+	model = np.array([reference.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
+	outX = np.array([s.query(e)[0] for e in elements])
+	outV = np.array([s.query(e)[1] for e in elements])
 
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
