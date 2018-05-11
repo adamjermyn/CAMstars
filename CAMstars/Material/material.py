@@ -93,7 +93,7 @@ class material:
 		try:
 			i = next(i for i,v in enumerate(self.names) if v.lower() == name.lower()) # Case-insensitive search
 			return self.logX[i], self.dlogX[i]
-		except ValueError:
+		except StopIteration:
 			return None
 
 	def queryIndex(self, name):
@@ -104,7 +104,7 @@ class material:
 		try:
 			i = next(i for i,v in enumerate(self.names) if v.lower() == name.lower()) # Case-insensitive search
 			return i
-		except ValueError:
+		except StopIteration:
 			return None
 
 	def likelihood(self, abundances, errs=None):

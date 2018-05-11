@@ -59,6 +59,7 @@ class population:
 		'''
 		Returns the population mean and standard deviation for the specified species.
 		'''
+		
 		if name in self.species:
 			ind = next(i for i,v in enumerate(self.species) if v.lower() == name.lower()) # Case-insensitive search
 			return self.logX[ind], self.dlogX[ind]
