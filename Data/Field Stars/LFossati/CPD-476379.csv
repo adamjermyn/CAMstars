@@ -1,5 +1,8 @@
 T: 11000
 dT: 250
+M: 2.71
+dM: 0.14
+logL: 1.76
 vrot: 136
 dvrot: 7
 General uncertainty: 0.26
