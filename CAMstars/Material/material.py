@@ -2,7 +2,7 @@ import numpy as np
 from CAMstars.Misc.utils import gaussianLogLike, propagate_errors
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.AccretedFraction.star import star
-from CAMstars.Misc.constants import mSun, yr, gSun
+from CAMstars.Misc.constants import mSun, yr, gSun, tSun
 
 # For this we assume that the accreted material is lighter than the stellar material
 def fraction(mass, radius, temperature, u_rot, logmdot, gradient=False):
@@ -61,6 +61,35 @@ class material:
 		if params is None:
 			params = {}
 		self.params = params
+
+		if 'logL' in params:
+			self.params['L'] = 10**self.params['logL']
+
+		# If two of T, R, L are present but not the third fill in the blanks
+		if 'T' in params and 'R' in params and 'L' not in params:
+			calc = lambda x: (x[0]/tSun)**4 * x[1]**2
+			w = (params['T'],params['R'])
+			self.params['L'] = calc(w)
+
+			if 'dT' in params and 'dR' in params:
+				dw = (params['dT'],params['dR'])
+				self.params['dL'] = propagate_errors(calc, w, dw)
+		elif 'T' in params and 'L' in params and 'R' not in params:
+			calc = lambda x: (x[0]/tSun)**(-2)*x[1]**(0.5)
+			w = (params['T'],params['L'])
+			self.params['R'] = calc(w)
+
+			if 'dT' in params and 'dL' in params:
+				dw = (params['dT'],params['dL'])
+				self.params['dR'] = propagate_errors(calc, w, dw)
+		elif 'R' in params and 'L' in params and 'T' not in params:
+			calc = lambda x: tSun * (x[1] / x[0]**2)**0.25
+			w = (params['R'],params['L'])
+			self.params['T'] = calc(w)
+
+			if 'dR' in params and 'dL' in params:
+				dw = (params['dR'],params['dL'])
+				self.params['dT'] = propagate_errors(calc, w, dw)
 
 		# If possible, calculate logg
 		if 'M' in params and 'R' in params:
