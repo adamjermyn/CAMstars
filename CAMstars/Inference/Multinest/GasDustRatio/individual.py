@@ -62,7 +62,6 @@ def buildReference(t, g, v):
 	dabundances = dreg((t,g,v))
 
 	for i,e in enumerate(refElems):
-		abundances[i] += sol.query(e)[0]
 		dabundances[i] = (dabundances[i]**2 + sol.query(e)[1]**2)**0.5
 
 	mat = material('Reference',refElems,abundances,dabundances)
