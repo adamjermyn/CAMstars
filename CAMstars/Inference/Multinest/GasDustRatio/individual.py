@@ -28,7 +28,7 @@ from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Load reference data
-hdpref = '/Users/adamjermyn/Dropbox/Research/GasDustInference/Machine Learning/'
+hdpref = '/home/asj42/Dropbox/Software/CAMstars/CAMstars/Inference/Multinest/GasDustRatio/'
 fi = h5py.File(hdpref + 'table_gp.hdf','r')
 output = np.array(fi['chemistry'])
 output_d = np.array(fi['d_chemistry'])
@@ -155,23 +155,27 @@ def infer(s):
 	if fAcc > 1:
 		fAcc = 1
 
-	refX = np.array([reference.query(e)[0] for e in elements])
+	refX = np.array([reference.query(e)[0] - sol.query(e)[0] for e in elements])
 	refV = np.array([reference.query(e)[1] for e in elements])
-	model = np.array([reference.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
-	outX = np.array([s.query(e)[0] for e in elements])
+	model = np.array([reference.query(e)[0] - sol.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
+	outX = np.array([s.query(e)[0] - sol.query(e)[0] for e in elements])
 	outV = np.array([s.query(e)[1] for e in elements])
+
+	print(refV)
 
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
-	ax.errorbar(range(len(model)), refX, yerr=refV, c='c')
-	ax.scatter(range(len(model)), model,c='b')
-	ax.errorbar(range(len(model)),outX,yerr=outV, fmt='o',c='r')
+	ax.errorbar(range(len(model)), refX, yerr=refV, fmt='o',c='c',label='Reference')
+	ax.scatter(range(len(model)), model,c='b',label='Model')
+	ax.errorbar(range(len(model)),outX,yerr=outV, fmt='o',c='r',label='Observed')
 	ax.set(xticks=range(len(model)), xticklabels=elements)
-	ax.set_ylabel('$\log [X]$')
+	ax.set_ylabel('$\log [X]/[X]_\odot$')
+	ax.legend()
 	ax = fig.add_subplot(212)
-	ax.scatter(range(len(model)), outX - model,c='b')
+	ax.scatter(range(len(model)), outX - model,c='b',label='Residuals')
 	ax.set(xticks=range(len(model)), xticklabels=elements)
 	ax.set_ylabel('Residuals')
+	ax.legend()
 	plt.savefig(oDir + '/model.pdf')
 	plt.clf()
 
