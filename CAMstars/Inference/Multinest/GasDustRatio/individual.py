@@ -18,6 +18,7 @@ import numpy as np
 import os
 import h5py
 from scipy.interpolate import RegularGridInterpolator as rgi
+from mpi4py import MPI
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
 from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
 from CAMstars.Parsers.condensation import condenseTemps
@@ -140,49 +141,51 @@ def infer(s):
 		print(i, p)
 
 	run(oDir, oPref, ranges, parameters, probability)
-	a, meds = analyze(oDir, oPref, oDir, oPref)
 
-	# Plot abundances
-	import matplotlib.pyplot as plt
-	plt.style.use('ggplot')
+	if MPI.COMM_WORLD.Get_rank() == 0:
+		a, meds = analyze(oDir, oPref, oDir, oPref)
 
-	nS = len(stars)
-	logfAcc = meds[0]
-	logd = meds[1]
+		# Plot abundances
+		import matplotlib.pyplot as plt
+		plt.style.use('ggplot')
 
-	fAcc = 10**np.array(logfAcc)
-	if fAcc > 1:
-		fAcc = 1
+		nS = len(stars)
+		logfAcc = meds[0]
+		logd = meds[1]
 
-	refX = np.array([reference.query(e)[0] - sol.query(e)[0] for e in elements])
-	refV = np.array([reference.query(e)[1] for e in elements])
-	model = np.array([reference.query(e)[0] - sol.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
-	outX = np.array([s.query(e)[0] - sol.query(e)[0] for e in elements])
-	outV = np.array([s.query(e)[1] for e in elements])
+		fAcc = 10**np.array(logfAcc)
+		if fAcc > 1:
+			fAcc = 1
 
-	print(refV)
+		refX = np.array([reference.query(e)[0] - sol.query(e)[0] for e in elements])
+		refV = np.array([reference.query(e)[1] for e in elements])
+		model = np.array([reference.query(e)[0] - sol.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
+		outX = np.array([s.query(e)[0] - sol.query(e)[0] for e in elements])
+		outV = np.array([s.query(e)[1] for e in elements])
 
-	fig = plt.figure()
-	ax = fig.add_subplot(211)
-	ax.errorbar(range(len(model)), refX, yerr=refV, fmt='o',c='c',label='Reference')
-	ax.scatter(range(len(model)), model,c='b',label='Model')
-	ax.errorbar(range(len(model)),outX,yerr=outV, fmt='o',c='r',label='Observed')
-	ax.set(xticks=range(len(model)), xticklabels=elements)
-	ax.set_ylabel('$\log [X]/[X]_\odot$')
-	ax.legend()
-	ax = fig.add_subplot(212)
-	ax.scatter(range(len(model)), outX - model,c='b',label='Residuals')
-	ax.set(xticks=range(len(model)), xticklabels=elements)
-	ax.set_ylabel('Residuals')
-	ax.legend()
-	plt.savefig(oDir + '/model.pdf')
-	plt.clf()
+		print(refV)
 
-	plot1D(a, parameters, oDir, oPref)
-	plot2D(a, parameters, oDir, oPref)
+		fig = plt.figure()
+		ax = fig.add_subplot(211)
+		ax.errorbar(range(len(model)), refX, yerr=refV, fmt='o',c='c',label='Reference')
+		ax.scatter(range(len(model)), model,c='b',label='Model')
+		ax.errorbar(range(len(model)),outX,yerr=outV, fmt='o',c='r',label='Observed')
+		ax.set(xticks=range(len(model)), xticklabels=elements)
+		ax.set_ylabel('$\log [X]/[X]_\odot$')
+		ax.legend()
+		ax = fig.add_subplot(212)
+		ax.scatter(range(len(model)), outX - model,c='b',label='Residuals')
+		ax.set(xticks=range(len(model)), xticklabels=elements)
+		ax.set_ylabel('Residuals')
+		ax.legend()
+		plt.savefig(oDir + '/model.pdf')
+		plt.clf()
 
-	import pickle
-	pickle.dump(a, open(oDir+'/' + 'analyzer.pickle','wb'))
+		plot1D(a, parameters, oDir, oPref)
+		plot2D(a, parameters, oDir, oPref)
+
+		import pickle
+		pickle.dump(a, open(oDir+'/' + 'analyzer.pickle','wb'))
 
 
 
