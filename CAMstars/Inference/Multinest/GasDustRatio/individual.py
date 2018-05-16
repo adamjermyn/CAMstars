@@ -29,7 +29,7 @@ from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
 # Load reference data
 hdpref = '/Users/adamjermyn/Dropbox/Research/GasDustInference/Machine Learning/'
-fi = h5py.File(hdpref + 'table.hdf','r')
+fi = h5py.File(hdpref + 'table_gp.hdf','r')
 ranges = np.array(fi['ranges'])
 output = np.array(fi['chemistry'])
 
