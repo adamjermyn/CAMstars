@@ -47,6 +47,7 @@ for m in accretingPop.materials:
 		accretingPop.materials.remove(m)
 
 exclude_S = [
+'HD100546', 
 'HD31648',
 'HD36112',
 'HD68695',
@@ -54,7 +55,8 @@ exclude_S = [
 'HD244604',
 'HD123269',
 'UCAC11105213',
-'UCAC11105379'
+'UCAC11105379',
+'T Ori' 
 ]
 
 for m in field.materials:
