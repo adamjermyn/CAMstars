@@ -5,6 +5,7 @@ import pymultinest
 from pymultinest.solve import solve
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
+from mpi4py import MPI
 
 def Prior(cube, ranges):
 	'''
@@ -54,16 +55,17 @@ def run(outputDirectory, outputPrefix, ranges, parameters, loglikelihood, n_live
 	for name, col in zip(parameters, result['samples'].transpose()):
 		print('%15s : %.3f +- %.3f' % (name, col.mean(), col.std()))
 
-	with open('%sparams.json' % prefix, 'w') as f:
-		json.dump(parameters, f, indent=2)
+	if MPI.COMM_WORLD.Get_rank() == 0:
+		with open('%sparams.json' % prefix, 'w') as f:
+			json.dump(parameters, f, indent=2)
 
-	parameters = json.load(open(prefix + 'params.json'))
-	n_params = len(parameters)
+		parameters = json.load(open(prefix + 'params.json'))
+		n_params = len(parameters)
 
-	a = pymultinest.Analyzer(n_params = n_params, outputfiles_basename = prefix)
-	s = a.get_stats()
+		a = pymultinest.Analyzer(n_params = n_params, outputfiles_basename = prefix)
+		s = a.get_stats()
 
-	json.dump(s, open(prefix + 'stats.json', 'w'), indent=4)
+		json.dump(s, open(prefix + 'stats.json', 'w'), indent=4)
 
 def analyze(inputDirectory, inputPrefix, outputDirectory, outputPrefix):
 	'''
