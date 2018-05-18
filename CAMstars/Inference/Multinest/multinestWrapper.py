@@ -37,8 +37,9 @@ def run(outputDirectory, outputPrefix, ranges, parameters, loglikelihood, n_live
 
 	prefix = outputDirectory + '/' + outputPrefix
 
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if MPI.COMM_WORLD.Get_rank() == 0:
+		if not os.path.exists(outputDirectory):
+			os.makedirs(outputDirectory)
 
 	ndim = len(ranges)
 
