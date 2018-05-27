@@ -26,10 +26,11 @@ from CAMstars.AccretedFraction.star import star
 from CAMstars.Material.population import population
 from CAMstars.Material.material import material
 from CAMstars.Misc.constants import mSun, yr
-from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
+from CAMstars.Misc.utils import propagate_errors, gaussianCovarLike, gaussianLogLike
 
 # Load reference data
-hdpref = '/home/asj42/Dropbox/Software/CAMstars/CAMstars/Inference/Multinest/GasDustRatio/'
+hdpref = '/users/adamjermyn/Dropbox/Software/CAMstars/CAMstars/Inference/Multinest/GasDustRatio/'
+#hdpref = '/home/asj42/Dropbox/Software/CAMstars/CAMstars/Inference/Multinest/GasDustRatio/'
 fi = h5py.File(hdpref + 'table_gp.hdf','r')
 output = np.array(fi['chemistry'])
 output_d = np.array(fi['d_chemistry'])
@@ -61,12 +62,14 @@ def buildReference(t, g, v):
 	# Constructs a reference given a star
 	abundances = reg((t,g,v))
 	dabundances = dreg((t,g,v))
+	print(dabundances)
 
 	for i,e in enumerate(refElems):
-		dabundances[i] = (dabundances[i]**2 + sol.query(e)[1]**2)**0.5
+		abundances[i] += sol.query(e)[0]
+		dabundances[i,i] = (dabundances[i,i]**2 + sol.query(e)[1]**2)**0.5
 
-	mat = material('Reference',refElems,abundances,dabundances)
-	return mat
+	mat = material('Reference',refElems,abundances,np.zeros(len(abundances)))
+	return mat, dabundances
 
 def fElements(e):
 	# Returns the refractory fraction for the element
@@ -89,7 +92,7 @@ def infer(s):
 	logg = s.params['logg']
 	vsini = s.params['vrot']
 
-	reference = buildReference(teff, logg, vsini)
+	reference, covar = buildReference(teff, logg, vsini)
 
 	# Extract accreted fractions
 	logf = s.params['logfAcc']
@@ -109,8 +112,12 @@ def infer(s):
 	fX = list(fElements(e) for e in elements)
 
 	# Compute difference and uncertainty
-	diff = list(s.query(e)[0] - reference.query(e)[0] for e in elements)
-	var = list(s.query(e)[1]**2 + reference.query(e)[1]**2 for e in elements)
+	diff = np.array(list(s.query(e)[0] - reference.query(e)[0] for e in elements))
+	c = np.zeros((len(elements),len(elements)))
+	for i,e in enumerate(elements):
+		for j,q in enumerate(elements):
+			c[i,j] = covar[refElems.index(e),refElems.index(q)]
+	covar = c
 
 	def probability(params):
 		nS = len(stars)
@@ -121,10 +128,9 @@ def infer(s):
 		if fAcc > 1:
 			fAcc = 1
 
-		q = [np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in s.names if e in elements]
+		q = np.array([np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in s.names if e in elements])
 
-		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q))]
-		like = sum(like)
+		like = gaussianCovarLike(diff - q, covar)
 		like += gaussianLogLike((logfAcc - logf) / dlogf)
 
 		return like
@@ -158,18 +164,18 @@ def infer(s):
 			fAcc = 1
 
 		refX = np.array([reference.query(e)[0] - sol.query(e)[0] for e in elements])
-		refV = np.array([reference.query(e)[1] for e in elements])
 		model = np.array([reference.query(e)[0] - sol.query(e)[0] + np.log(1-fAcc + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements])
 		outX = np.array([s.query(e)[0] - sol.query(e)[0] for e in elements])
 		outV = np.array([s.query(e)[1] for e in elements])
 
-		print(refV)
+		for e in elements:
+			print(e, reference.query(e)[0], sol.query(e)[0], s.query(e)[0])
 
 		fig = plt.figure()
 		ax = fig.add_subplot(211)
-		ax.errorbar(range(len(model)), refX, yerr=refV, fmt='o',c='c',label='Reference')
-		ax.scatter(range(len(model)), model,c='b',label='Model')
-		ax.errorbar(range(len(model)),outX,yerr=outV, fmt='o',c='r',label='Observed')
+		ax.scatter(range(len(model)), refX, c='c',label='Reference')
+		ax.scatter(range(len(model)), model, c='b',label='Model')
+		ax.errorbar(range(len(model)), outX, yerr=outV, fmt='o',c='r',label='Observed')
 		ax.set(xticks=range(len(model)), xticklabels=elements)
 		ax.set_ylabel('$\log [X]/[X]_\odot$')
 		ax.legend()
