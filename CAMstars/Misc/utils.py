@@ -9,6 +9,9 @@ def gaussianLogLike(x):
 
 	return pref - x**2/2
 
+def gaussianCovarLike(x, covar):
+	return -np.dot(x,np.dot(np.linalg.inv(covar),x))/2
+
 # For propagating errors
 def propagate_errors(func, x, dx, eps=1e-3):
 	'''
