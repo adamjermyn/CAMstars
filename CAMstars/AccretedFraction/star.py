@@ -97,7 +97,7 @@ class star:
 		self.dM = 5e-5*(self.temperature/1e4)**(5./2)*(self.density/0.1)**(-1)
 
 		# Convective viscosity (added to molecular)
-		if self.mass < 1.5*mSun:
+		if self.mass < 1.4*mSun:
 			vc = (self.flux / self.density)**(1./3)
 			self.dM += vc * self.height
 
