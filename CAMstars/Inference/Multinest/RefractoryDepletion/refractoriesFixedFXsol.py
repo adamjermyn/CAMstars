@@ -57,8 +57,8 @@ for m in accretingPop.materials:
 		ind = m.queryIndex('S')
 		if ind is not None:
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 exclude_Zn = [
 'UCAC11105106',
@@ -72,8 +72,8 @@ for m in accretingPop.materials:
 			ind = m.queryIndex('Zn')
 			if ind is not None:
 				m.names.pop(ind)
-				np.delete(m.logX, ind)
-				np.delete(m.dlogX, ind)
+				m.logX = np.delete(m.logX, ind)
+				m.dlogX = np.delete(m.dlogX, ind)
 
 include_Na = [
 'HD139614',
@@ -85,8 +85,8 @@ for m in accretingPop.materials:
 		ind = m.queryIndex('Na')
 		if ind is not None:
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 accretingPop = population(accretingPop.materials)
 

@@ -29,7 +29,7 @@ class population:
 				lx = np.array(lx)
 				dlx = np.array(dlx)
 				self.logX[i] = np.average(lx)
-				self.dlogX[i] = np.average((lx - self.logX[i])**2)
+				self.dlogX[i] = np.average((lx - self.logX[i])**2)**0.5
 			else:
 				# Otherwise there's no population to aggregate.
 				self.logX[i], self.dlogX[i] = mats[0].query(s)
