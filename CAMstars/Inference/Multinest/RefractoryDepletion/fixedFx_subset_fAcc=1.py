@@ -28,7 +28,6 @@ from CAMstars.Parsers.whitelist_pop_filter import field, accretingPop, stars
 
 # Extract accreted fractions
 logf = np.zeros(len(stars))
-dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
 
 elements = list(e for e in accretingPop.species if e in field.species)
 
