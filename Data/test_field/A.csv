@@ -1,0 +1,18 @@
+T: 8400
+dT: 200
+M: 1.94
+dM: 0.14
+logL: 1.25
+vrot: 230
+dvrot: 10
+General uncertainty: 0.32
+Abundance Normalization: H12
+Element,logX,dlogX
+
+X,0.9,0.1
+Y,1.9,0.1
+Z,2.9,0.1
+
+References:
+
+Test

@@ -1,0 +1,15 @@
+T: 9900
+dT: 200
+vrot: 151.6
+dvrot: 0.2
+Abundance Normalization: H12
+Element,logX,dlogX
+
+X,0.5,0.1
+Y,1.5,0.1
+Z,2.5,0.1
+
+
+References:
+
+Test

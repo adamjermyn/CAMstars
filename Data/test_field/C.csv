@@ -1,0 +1,14 @@
+T: 9800
+dT: 200
+vrot: 17.8
+dvrot: 0.4
+Abundance Normalization: Ntot
+Element,logX,dlogX
+
+X,1.1,0.1
+Y,2.1,0.1
+Z,3.1,0.1
+
+References:
+
+Test
