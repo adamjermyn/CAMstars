@@ -20,6 +20,9 @@ for name in names:
 	fi.close()
 
 ### Generate depleted accreting test data
+# Test should find that fully-refractory elements (fixedList1) are ~0.5dex depleted and
+# partially-refractory ones (freeList) are ~0.25dex depleted.
+# The remainder should be at solar abudnance.
 
 fixedList1 = ['Fe','Mg','Si','Ti']
 fixedList0 = ['H','He']
