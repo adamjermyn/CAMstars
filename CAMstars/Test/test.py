@@ -1,8 +1,10 @@
 import numpy as np
 import os
+from glob import glob
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
 from CAMstars.Parsers.stars import parse
 from CAMstars.Parsers.condensation import condenseTemps
+from CAMstars.Material.population import population
 from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
@@ -15,7 +17,7 @@ accretingPop = population(materials)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 files = glob(dir_path + '/../../Data/test_field/*.csv')
 materials = list([parse(f) for f in files])
-fieldPop = population(materials)
+field = population(materials)
 
 # Filter out all but whitelisted elements
 whitelist = ['Fe','Mg','Si','Ti','H','He','C','O','Zn','Na','S']
@@ -36,6 +38,7 @@ for m in field.materials:
 
 field = population(field.materials)
 accretingPop = population(accretingPop.materials)
+stars = accretingPop.materials
 
 # Extract accreted fractions
 logf = np.zeros(len(stars))
