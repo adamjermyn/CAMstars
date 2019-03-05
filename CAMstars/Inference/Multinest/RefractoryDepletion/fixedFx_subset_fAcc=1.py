@@ -160,21 +160,18 @@ dlogf[dlogf == 0] += 0.01
 
 def probability(params):
 	nS = len(stars)
-	logfAcc = params[:nS]
-	logd = params[nS:2*nS]
-	fX = params[2*nS:]
+	logd = params[:nS]
+	fX = params[nS:2*nS]
 
 	# Expand fX to include fixed elements
 	fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
-	fAcc = 10**logfAcc
-	fAcc[fAcc > 1] = 1
+	fAcc = 10**logf
 
 	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
-	like += np.sum(gaussianLogLike((logfAcc - logf) / dlogf))
 
 	return like
 
@@ -182,8 +179,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 oDir = dir_path + '/../../../../Output/FixedFX_Subset_fAcc1/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
-parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
-ranges = [(lf - 3 * dlf,min(0, lf + 3 * dlf)) for lf, dlf in zip(*(logf, dlogf))] + len(stars) * [(-3,3)] + len(freeElements) * [(0,1)]
+parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
+ranges = len(stars) * [(-3,3)] + len(freeElements) * [(0,1)]
 ndim = len(ranges)
 
 for i,p in enumerate(parameters):
@@ -207,7 +204,6 @@ fX = meds[2*nS:]
 fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
 fAcc = 10**np.array(logfAcc)
-fAcc[fAcc > 1] = 1
 
 solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
