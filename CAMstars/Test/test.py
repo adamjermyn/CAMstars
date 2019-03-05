@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
-from CAMStars.Parsers.star import parse
+from CAMstars.Parsers.stars import parse
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
