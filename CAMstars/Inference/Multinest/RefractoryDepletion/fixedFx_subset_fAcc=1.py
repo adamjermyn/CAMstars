@@ -53,9 +53,6 @@ freeElements = list(e for e in elements if fixedElements[e] is None)
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
 
-# The formalism has trouble with fixing some parameters but not others, so we assign an error of 0.01 to any logf's that have zero error.
-dlogf[dlogf == 0] += 0.01
-
 def probability(params):
 	nS = len(stars)
 	logd = params[:nS]
