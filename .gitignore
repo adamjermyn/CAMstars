@@ -2,6 +2,11 @@
 *.pdf
 *.png
 
+# Temp files
+*.csv~
+*.py~
+*.DS_Store
+
 # Output
 Output/*
 
