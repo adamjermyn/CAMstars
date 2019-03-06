@@ -3,7 +3,7 @@ import numpy as np
 
 ### Generate field test data
 
-numStars = 10
+numStars = 20
 
 names = [str(i) for i in range(numStars)]
 for name in names:
@@ -20,8 +20,9 @@ for name in names:
 	fi.close()
 
 ### Generate depleted accreting test data
-# Test should find that fully-refractory elements (fixedList1) are ~0.5dex depleted and
-# partially-refractory ones (freeList) are ~0.25dex depleted.
+# Test should find that fully-refractory elements (fixedList1) are ~0.5dex depleted, hence
+# delta = -0.5. The partially-refractory ones (freeList) should be found to be ~0.25dex depleted, 
+# meaning that 
 # The remainder should be at solar abudnance.
 
 fixedList1 = ['Fe','Mg','Si','Ti']
@@ -36,7 +37,7 @@ def indicator(x):
 	else:
 		return None
 
-numStars = 10
+numStars = 20
 
 names = [str(i) for i in range(numStars)]
 for name in names:
