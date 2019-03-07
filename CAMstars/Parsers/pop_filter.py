@@ -1,9 +1,13 @@
 import numpy as np
+from copy import deepcopy
 from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
 from CAMstars.Material.population import population
 
 # Combine the field populations
 field = AJMartinPop + LFossatiPop
+
+field = deepcopy(field)
+accretingPop = deepcopy(accretingPop)
 
 # Exclude elements that have unreliable error estimates
 
