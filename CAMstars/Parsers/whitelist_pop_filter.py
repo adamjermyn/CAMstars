@@ -6,7 +6,7 @@ accretingPop = deepcopy(accretingPop)
 stars = deepcopy(stars)
 
 # Filter out all but whitelisted elements
-whitelist = ['Fe','Mg','Si','Ti','H','He','C','O','Zn','Na','S']
+whitelist = ['Fe','Mg','Si','Ti','H','He','O','Zn','Na','S']
 for m in accretingPop.materials:
 	toremove = set(m.names).difference(set(whitelist))
 	for n in toremove:
