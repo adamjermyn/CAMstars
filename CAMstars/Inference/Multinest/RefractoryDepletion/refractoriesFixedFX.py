@@ -132,6 +132,7 @@ for i,star in enumerate(stars):
 	ax.errorbar(range(len(model[i])),outs[i],yerr=outsv[i], fmt='o',c='r', label='Observed')
 	ax.set(xticks=range(len(model[i])), xticklabels=outsn[i])
 	ax.set_ylabel('$\log [X]$')
+	ax.legend()
 	ax = fig.add_subplot(212)
 	ax.errorbar(range(len(model[i])), outs[i] - model[i], yerr=outsv[i],c='b', label='Residuals')
 	ax.set(xticks=range(len(model[i])), xticklabels=outsn[i])
