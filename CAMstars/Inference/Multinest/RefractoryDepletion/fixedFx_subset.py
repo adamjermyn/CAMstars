@@ -41,7 +41,7 @@ elements = sorted(elements, key=lambda x: condenseTemps[x])
 
 fixedList1 = ['Fe','Mg','Si','Ti']
 fixedList0 = ['H','He']
-freeList = ['C','O','Zn','Na','S']
+freeList = ['O','Zn','Na','S']
 
 def indicator(x):
 	if x in fixedList1:
@@ -132,18 +132,20 @@ outsn = list(np.array(o) for o in outsn)
 for i,star in enumerate(stars):
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
-	ax.errorbar(range(len(model[i])), solX[i], yerr=solV[i], c='c')
-	ax.errorbar(range(len(model[i])), refs[i], yerr=refsv[i], c='k')
-	ax.scatter(range(len(model[i])), model[i],c='b')
-	ax.errorbar(range(len(model[i])),outs[i],yerr=outsv[i], fmt='o',c='r')
+	ax.errorbar(range(len(model[i])), solX[i], yerr=solV[i], c='c', label='Solar')
+	ax.errorbar(range(len(model[i])), refs[i], yerr=refsv[i], c='k', label='Reference')
+	ax.scatter(range(len(model[i])), model[i],c='b', label='Model')
+	ax.errorbar(range(len(model[i])),outs[i],yerr=outsv[i], fmt='o',c='r', label='Observed')
 	ax.set(xticks=range(len(model[i])), xticklabels=outsn[i])
 	ax.set_ylabel('$\log [X]$')
 	ax = fig.add_subplot(212)
-	ax.scatter(range(len(model[i])), outs[i] - model[i],c='b')
+	ax.errorbar(range(len(model[i])), outs[i] - model[i], yerr=outsv[i],c='b', label='Residuals')
 	ax.set(xticks=range(len(model[i])), xticklabels=outsn[i])
 	ax.set_ylabel('Residuals')
+	ax.legend()
 	plt.savefig(oDir + '/' + star.name + '_model.pdf')
 	plt.clf()
+
 
 
 plot1D(a, parameters, oDir, oPref)
