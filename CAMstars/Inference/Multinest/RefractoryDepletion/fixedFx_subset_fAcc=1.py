@@ -91,9 +91,8 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 nS = len(stars)
-logfAcc = meds[:nS]
-logd = meds[nS:2*nS]
-fX = meds[2*nS:]
+logd = meds[:nS]
+fX = meds[nS:2*nS]
 # Expand fX to include fixed elements
 fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
