@@ -45,7 +45,7 @@ for j,name in enumerate(names):
 	fi.write('Abundance Normalization: H0\n')
 	fi.write('Element,logX,dlogX\n')
 	for e in sol.names:
-		if (np.random.randint(2)):
+		if (np.random.rand() < 0.9):
 			mu,_ = sol.query(e)
 			i = indicator(e)
 			if i == 1:
