@@ -1,5 +1,5 @@
 from copy import deepcopy
-from CAMStars.Parsers.pop_filter import field, accretingPop, stars
+from CAMstars.Parsers.pop_filter import field, accretingPop, stars
 
 field = deepcopy(field)
 accretingPop = deepcopy(accretingPop)
