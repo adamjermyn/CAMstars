@@ -14,7 +14,7 @@ for name in names:
 		if (np.random.randint(2)):
 			mu,_ = sol.query(e)
 			if np.isfinite(mu):
-				fi.write(e + ',' + str(mu + 0.1*np.random.randn(1)[0]) + ',' + '0.1' + '\n')
+				fi.write(e + ',' + str(mu + 0.01*np.random.randn(1)[0]) + ',' + '0.01' + '\n')
 	fi.write('Referrences:\n')
 	fi.write('Test\n')
 	fi.close()
@@ -53,7 +53,7 @@ for j,name in enumerate(names):
 			elif i is None:
 				mu += np.log10(1 - facc + facc * (1 - 0.5 + 0.5 * 10**(-2.0)))
 			if np.isfinite(mu):
-				fi.write(e + ',' + str(mu + 0.1*np.random.randn(1)[0]) + ',' + '0.1' + '\n')
+				fi.write(e + ',' + str(mu + 0.01*np.random.randn(1)[0]) + ',' + '0.1' + '\n')
 	fi.write('Referrences:\n')
 	fi.write('Test\n')
 	fi.close()

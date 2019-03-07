@@ -74,7 +74,7 @@ def probability(params):
 	logfAcc = params[:nS]
 	logd = params[nS:2*nS]
 	fX = params[2*nS:]
-	
+
 	# Expand fX to include fixed elements
 	fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
@@ -89,7 +89,7 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../Output/Test/'
+oDir = dir_path + '/../../Output/TestFacc/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
 parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
