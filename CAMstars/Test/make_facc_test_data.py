@@ -40,7 +40,7 @@ names = [str(i) for i in range(numStars)]
 for j,name in enumerate(names):
 	facc = 10**(-1 + 0.2 * j)
 	fi = open('Data/test_accreting/' + name + '.csv','w')
-	fi.write('logfAcc: ' + str(facc) + '\n')
+	fi.write('logfAcc: ' + str(np.log10(facc)) + '\n')
 	fi.write('dlogfAcc: ' + str(0.01) + '\n')
 	fi.write('Abundance Normalization: H0\n')
 	fi.write('Element,logX,dlogX\n')
