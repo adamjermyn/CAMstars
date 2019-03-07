@@ -88,7 +88,7 @@ class star:
 		self.density = findRho(op, self.temperature, self.gravity)
 		self.opacity = 10**op.opacity(self.temperature, self.density)
 		self.pressure = pFromKappa(self.opacity, self.gravity, 2./3)
-		self.photoMass = (2./3) * 4 * np.pi * self.radius**2 / self.opacity
+		self.photoMass = (2./3) * self.area / self.opacity
 		self.height = self.pressure / (self.density * self.gravity)
 		self.soundspeed = (5*self.pressure/(3*self.density))**0.5
 		self.thermalDiff = self.height * self.flux / self.pressure
