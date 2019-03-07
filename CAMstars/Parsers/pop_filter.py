@@ -1,5 +1,6 @@
 import numpy as np
 from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
+from CAMstars.Material.population import population
 
 # Combine the field populations
 field = AJMartinPop + LFossatiPop
