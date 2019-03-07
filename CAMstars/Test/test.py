@@ -2,7 +2,7 @@ import numpy as np
 import os
 from glob import glob
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
-from CAMstars.Parsers.stars import parse
+from CAMstars.Parsers.stars import parse, sol
 from CAMstars.Parsers.condensation import condenseTemps
 from CAMstars.Material.population import population
 from CAMstars.Misc.constants import mSun, yr
@@ -76,7 +76,7 @@ def probability(params):
 
 	fAcc = 10**logf
 
-	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+	q = [[np.log10((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
@@ -84,7 +84,7 @@ def probability(params):
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../../Output/Test/'
+oDir = dir_path + '/../../Output/Test/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
 parameters = [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
@@ -110,13 +110,13 @@ fX = meds[nS:2*nS]
 # Expand fX to include fixed elements
 fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
-fAcc = 10**np.array(logfAcc)
+fAcc = 10**logf
 
 solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
 refs = [[field.queryStats(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 refsv = [[field.queryStats(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
-model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+model = [[field.queryStats(e)[0] + np.log10((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
 outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
 outsn = [[e for e in m.names if e in elements] for m in stars]
