@@ -1,5 +1,6 @@
 from copy import deepcopy
 from CAMstars.Parsers.pop_filter import field, accretingPop, stars
+from CAMstars.Material.population import population
 import numpy as np
 
 field = deepcopy(field)
