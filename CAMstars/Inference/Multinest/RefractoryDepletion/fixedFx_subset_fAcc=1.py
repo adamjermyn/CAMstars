@@ -96,7 +96,7 @@ fX = meds[nS:2*nS]
 # Expand fX to include fixed elements
 fX = np.array(list(fX[freeElements.index(e)] if e in freeElements else fixedElements[e] for e in elements))
 
-fAcc = 10**np.array(logfAcc)
+fAcc = np.ones(len(stars))
 
 solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
