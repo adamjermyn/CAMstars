@@ -38,7 +38,7 @@ numStars = 5
 
 names = [str(i) for i in range(numStars)]
 for j,name in enumerate(names):
-	facc = 0.1 * j
+	facc = 0.2 * j
 	fi = open('Data/test_accreting/' + name + '.csv','w')
 	fi.write('logfAcc: ' + str(facc) + '\n')
 	fi.write('dlogfAcc: ' + str(0.01) + '\n')
