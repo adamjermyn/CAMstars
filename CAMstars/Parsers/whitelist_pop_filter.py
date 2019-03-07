@@ -1,11 +1,13 @@
 from copy import deepcopy
 from CAMstars.Parsers.pop_filter import field, accretingPop, stars
 from CAMstars.Material.population import population
+from CAMstars.Parsers.stars import sol
 import numpy as np
 
 field = deepcopy(field)
 accretingPop = deepcopy(accretingPop)
 stars = deepcopy(stars)
+sol = deepcopy(sol)
 
 # Filter out all but whitelisted elements
 whitelist = ['Fe','Mg','Si','Ti','H','He','O','Zn','Na','S']
