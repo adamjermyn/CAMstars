@@ -1,4 +1,9 @@
+from copy import deepcopy
 from CAMStars.Parsers.pop_filter import field, accretingPop, stars
+
+field = deepcopy(field)
+accretingPop = deepcopy(accretingPop)
+stars = deepcopy(stars)
 
 # Filter out all but whitelisted elements
 whitelist = ['Fe','Mg','Si','Ti','H','He','C','O','Zn','Na','S']
