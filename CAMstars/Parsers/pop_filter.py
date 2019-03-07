@@ -45,6 +45,15 @@ for m in field.materials:
 			m.logX = np.delete(m.logX, ind)
 			m.dlogX = np.delete(m.dlogX, ind)
 
+for m in accretingPop.materials:
+	if m.name in exclude_S:
+		ind = m.queryIndex('S')
+		if ind is not None:			
+			m.names.pop(ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
+		print(m.name,m.names)
+
  
 exclude_Zn = [
 'UCAC11105106',
@@ -75,6 +84,14 @@ include_Na = [
 ]
 
 for m in accretingPop.materials:
+	if m.name not in include_Na:
+		ind = m.queryIndex('Na')
+		if ind is not None:
+			m.names.pop(ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
+
+for m in field.materials:
 	if m.name not in include_Na:
 		ind = m.queryIndex('Na')
 		if ind is not None:
