@@ -56,7 +56,6 @@ for m in accretingPop.materials:
 			m.names.pop(ind)
 			m.logX = np.delete(m.logX, ind)
 			m.dlogX = np.delete(m.dlogX, ind)
-		print(m.name,m.names)
 
  
 exclude_Zn = [
