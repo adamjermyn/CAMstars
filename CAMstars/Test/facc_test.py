@@ -1,127 +1,73 @@
-'''
-This script uses Nested Sampling to infer the refractory fraction of each element
-from data of a population of stars.
-
-The abundance of element X in star i is taken to be
-
-X_i = X_t ((1-f_i) + f ((1 - f_X) + f_X delta_{d,*})),
-
-where f_i are the photospheric fractions of the stars, f_X are the refractory fractions,
-and delta_{d,*} are the enhancement/depletion fractions for the star. X_t are taken
-to be fixed reference values.
-
-In this inference problem we hold f_X = 1 for all X with condensation temperatures above 1500K.
-'''
-
 import numpy as np
 import os
+from glob import glob
 from CAMstars.Inference.Multinest.multinestWrapper import run, analyze, plot1D, plot2D
-from CAMstars.Parsers.stars import accretingPop, AJMartinPop, LFossatiPop, sol
+from CAMstars.Parsers.stars import parse, sol
 from CAMstars.Parsers.condensation import condenseTemps
-from CAMstars.AccretedFraction.star import star
 from CAMstars.Material.population import population
 from CAMstars.Misc.constants import mSun, yr
 from CAMstars.Misc.utils import propagate_errors, gaussianLogLike
 
-# Exclude elements that have unreliable error estimates
 
-exclude_Temp = [
-'UCAC12284506',
-'UCAC12284746',
-'UCAC12065075',
-'UCAC12284653',
-'UCAC12284594',
-'UCAC12065058',
-'V380 Ori B'
-]
+dir_path = os.path.dirname(os.path.realpath(__file__))
+files = glob(dir_path + '/../../Data/test_accreting/*.csv')
+materials = list([parse(f) for f in files])
+accretingPop = population(materials)
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+files = glob(dir_path + '/../../Data/test_field/*.csv')
+materials = list([parse(f) for f in files])
+field = population(materials)
+
+# Filter out all but whitelisted elements
+whitelist = ['Fe','Mg','Si','Ti','H','He','C','O','Zn','Na','S']
 for m in accretingPop.materials:
-	if m.name in exclude_Temp:
-		accretingPop.materials.remove(m)
+	toremove = set(m.names).difference(set(whitelist))
+	for n in toremove:
+		ind = m.queryIndex(n)
+		m.names.pop(ind)
+		m.logX = np.delete(m.logX, ind)
+		m.dlogX = np.delete(m.dlogX, ind)
+for m in field.materials:
+	toremove = set(m.names).difference(set(whitelist))
+	for n in toremove:
+		ind = m.queryIndex(n)
+		m.names.pop(ind)
+		m.logX = np.delete(m.logX, ind)
+		m.dlogX = np.delete(m.dlogX, ind)
 
-exclude_S = [
-'HD100546', 
-'HD31648',
-'HD36112',
-'HD68695',
-'HD179218',
-'HD244604',
-'HD123269',
-'UCAC11105213',
-'UCAC11105379',
-'T Ori' 
-]
-
-for m in accretingPop.materials:
-	if m.name in exclude_S:
-		ind = m.queryIndex('S')
-		if ind is not None:
-			m.names.pop(ind)
-			m.logX = np.delete(m.logX, ind)
-			m.dlogX = np.delete(m.dlogX, ind)
-
-exclude_Zn = [
-'UCAC11105106',
-'UCAC11105213',
-'UCAC11105379'
-]
-
-for m in accretingPop.materials:
-	if m.name != 'HD144432':
-		if 'Zn' in m.names:
-			ind = m.queryIndex('Zn')
-			if ind is not None:
-				m.names.pop(ind)
-				m.logX = np.delete(m.logX, ind)
-				m.dlogX = np.delete(m.dlogX, ind)
-
-include_Na = [
-'HD139614',
-'HD144432'
-]
-
-for m in accretingPop.materials:
-	if m.name not in include_Na:
-		ind = m.queryIndex('Na')
-		if ind is not None:
-			m.names.pop(ind)
-			m.logX = np.delete(m.logX, ind)
-			m.dlogX = np.delete(m.dlogX, ind)
-
+field = population(field.materials)
 accretingPop = population(accretingPop.materials)
-
-# Combine the field populations
-field = population([sol])
-
-# Filter out stars with no known Mdot
-accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
 stars = accretingPop.materials
 
 # Extract accreted fractions
-logf = np.array(list(s.params['logfAcc'] for s in stars))
-dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
+logf = np.zeros(len(stars))
 
 elements = list(e for e in accretingPop.species if e in field.species)
 
 # Sort elements by condensation temperature
 elements = sorted(elements, key=lambda x: condenseTemps[x])
 
+fixedList1 = ['Fe','Mg','Si','Ti']
+fixedList0 = ['H','He']
+freeList = ['C','O','Zn','Na','S']
+
 def indicator(x):
-	if x > 1000:
+	if x in fixedList1:
 		return 1
-	elif x < 200:
+	elif x in fixedList0:
 		return 0
 	else:
 		return None
 
-fixedElements = {e:indicator(condenseTemps[e]) for e in elements}
+logf = np.array(list(s.params['logfAcc'] for s in stars))
+dlogf = np.array(list(s.params['dlogfAcc'] for s in stars))
+
+fixedElements = {e:indicator(e) for e in elements}
 freeElements = list(e for e in elements if fixedElements[e] is None)
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
-
-# The formalism has trouble with fixing some parameters but not others, so we assign an error of 0.01 to any logf's that have zero error.
-dlogf[dlogf == 0] += 0.01
 
 def probability(params):
 	nS = len(stars)
@@ -135,16 +81,15 @@ def probability(params):
 	fAcc = 10**logfAcc
 	fAcc[fAcc > 1] = 1
 
-	q = [[np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+	q = [[np.log10((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 
 	like = [[gaussianLogLike((diff[i][j] - q[i][j])/var[i][j]**0.5) for j in range(len(q[i]))] for (i,m) in enumerate(stars)]
 	like = sum(sum(l) for l in like)
-	like += np.sum(gaussianLogLike((logfAcc - logf) / dlogf))
 
 	return like
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-oDir = dir_path + '/../../../../Output/RefractoriesFixedFXsol/'
+oDir = dir_path + '/../../Output/TestFacc/'
 oDir = os.path.abspath(oDir)
 oPref = 'Ref'
 parameters = [s.name + ' $\log f$' for s in stars] + [s.name + ' $\log \delta$' for s in stars] + ['$f_{\mathrm{' + e + '}}$' for e in freeElements]
@@ -153,6 +98,9 @@ ndim = len(ranges)
 
 for i,p in enumerate(parameters):
 	print(i, p)
+
+print(elements)
+print(freeElements)
 
 run(oDir, oPref, ranges, parameters, probability)
 a, meds = analyze(oDir, oPref, oDir, oPref)
@@ -175,7 +123,7 @@ solX = [[sol.query(e)[0] for e in m.names if e in elements] for i,m in enumerate
 solV = [[sol.query(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
 refs = [[field.queryStats(e)[0] for e in m.names if e in elements] for i,m in enumerate(stars)]
 refsv = [[field.queryStats(e)[1] for e in m.names if e in elements] for i,m in enumerate(stars)]
-model = [[field.queryStats(e)[0] + np.log((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
+model = [[field.queryStats(e)[0] + np.log10((1-fAcc[i]) + fAcc[i] * (1-fX[elements.index(e)] + 10**(logd[i])*fX[elements.index(e)])) for e in m.names if e in elements] for i,m in enumerate(stars)]
 outs = [[m.query(e)[0] for e in m.names if e in elements] for m in stars]
 outsv = [[m.query(e)[1] for e in m.names if e in elements] for m in stars]
 outsn = [[e for e in m.names if e in elements] for m in stars]
@@ -209,9 +157,8 @@ for i,star in enumerate(stars):
 plot1D(a, parameters, oDir, oPref)
 plot2D(a, parameters, oDir, oPref)
 
-
-
-
+import pickle
+pickle.dump(a, open(oDir+'/' + 'analyzer.pickle','wb'))
 
 
 

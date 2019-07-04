@@ -88,7 +88,7 @@ class star:
 		self.density = findRho(op, self.temperature, self.gravity)
 		self.opacity = 10**op.opacity(self.temperature, self.density)
 		self.pressure = pFromKappa(self.opacity, self.gravity, 2./3)
-		self.photoMass = (2./3) * 4 * np.pi * self.radius**2 / self.opacity
+		self.photoMass = (2./3) * self.area / self.opacity
 		self.height = self.pressure / (self.density * self.gravity)
 		self.soundspeed = (5*self.pressure/(3*self.density))**0.5
 		self.thermalDiff = self.height * self.flux / self.pressure
@@ -97,7 +97,7 @@ class star:
 		self.dM = 5e-5*(self.temperature/1e4)**(5./2)*(self.density/0.1)**(-1)
 
 		# Convective viscosity (added to molecular)
-		if self.mass < 1.5*mSun:
+		if self.mass < 1.4*mSun:
 			vc = (self.flux / self.density)**(1./3)
 			self.dM += vc * self.height
 

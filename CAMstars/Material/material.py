@@ -91,7 +91,7 @@ class material:
 				dw = (params['dR'],params['dL'])
 				self.params['dT'] = propagate_errors(calc, w, dw)
 
-		# If possible, calculate logg
+		# If possible, calculate log10(g)
 		if 'M' in params and 'R' in params:
 			gcalc = lambda x: np.log10(gSun * x[0] / x[1]**2)
 			w = (params['M'], params['R'])

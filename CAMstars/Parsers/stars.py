@@ -42,7 +42,7 @@ def parse(fname):
 
 	# Correct for different normalizations
 	if params['Abundance Normalization'] == 'Ntot':
-		nH = 1 - sum(10**w for w in logX)
+		nH = 1 - sum(10**w for i,w in enumerate(logX) if names[i] != 'H')
 		logX = logX - np.log10(nH)
 	elif params['Abundance Normalization'] == 'H12':
 		logX -= 12

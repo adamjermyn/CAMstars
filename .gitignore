@@ -1,6 +1,13 @@
 # Data files
 *.pdf
 *.png
+Data/test_accreting/*.csv
+Data/test_field/*.csv
+
+# Temp files
+*.csv~
+*.py~
+*.DS_Store
 
 # Output
 Output/*
