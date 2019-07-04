@@ -52,7 +52,7 @@ def indicator(x):
 		return None
 
 fixedElements = {e:indicator(e) for e in elements}
-freeElements = list(e for e in elements if fixedElements[e] is None)
+freeElements = list(e for e in elements if e in freeList)
 
 diff = list([star.logX[i] - field.queryStats(e)[0] for i,e in enumerate(star.names) if e in elements] for star in stars)
 var = list([field.queryStats(e)[1]**2 + star.dlogX[i]**2 for i,e in enumerate(star.names) if e in elements] for star in stars)
