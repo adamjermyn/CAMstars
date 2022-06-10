@@ -106,7 +106,6 @@ class star:
 		# For iron (weight 55, 55/2 for singly-ionised) accreting into ionised hydrogen (1/2)
 		# this is 55.
 		d = self.dM + self.rotationalMixing(u_rot)
-
 		f = 0
 
 		if not gradient:
