@@ -30,8 +30,7 @@ import sys
 
 # Load reference data
 
-# Combine the field populations
-field = AJMartinPop + LFossatiPop
+# Set up the reference population
 
 # Exclude elements that have unreliable error estimates
 
@@ -45,9 +44,6 @@ exclude_Temp = [
 'V380 Ori B'
 ]
 
-for m in field.materials:
-	if m.name in exclude_Temp:
-		field.materials.remove(m)
 for m in accretingPop.materials:
 	if m.name in exclude_Temp:
 		accretingPop.materials.remove(m)
@@ -64,14 +60,6 @@ exclude_S = [
 'UCAC11105379',
 'T Ori' 
 ]
-
-for m in field.materials:
-	if m.name in exclude_S:
-		ind = m.queryIndex('S')
-		if ind is not None:			
-			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
 
 for m in accretingPop.materials:
 	if m.name in exclude_S:
@@ -96,14 +84,6 @@ for m in accretingPop.materials:
 				np.delete(m.logX, ind)
 				np.delete(m.dlogX, ind)
 
-for m in field.materials:
-	if m.name in exclude_Zn:
-		ind = m.queryIndex('Zn')
-		if ind is not None:		
-			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
-
 include_Na = [
 'HD139614',
 'HD144432'
@@ -117,7 +97,7 @@ for m in accretingPop.materials:
 			np.delete(m.logX, ind)
 			np.delete(m.dlogX, ind)
 
-field = population(field.materials)
+field = population([sol])
 reference = field
 accretingPop = population(accretingPop.materials)
 

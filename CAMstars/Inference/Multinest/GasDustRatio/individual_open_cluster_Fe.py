@@ -149,7 +149,7 @@ def infer(s):
 		dlogf += 0.01
 
 	# Determine elements with enough information for inference
-	elements = list(e for e in s.names if e in field.species)
+	elements = list(e for e in s.names if e in field.species and e in ['Fe'])
 
 	# Sort elements by condensation temperature
 	elements = sorted(elements, key=lambda x: condenseTemps[x])
