@@ -227,7 +227,6 @@ def infer(s):
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
 stars = accretingPop.materials
 for s in stars:
-	if s.name == 'HD163296':
-		infer(s)
+	infer(s)
 
 
