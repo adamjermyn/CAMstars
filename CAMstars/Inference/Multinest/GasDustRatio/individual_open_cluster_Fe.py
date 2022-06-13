@@ -161,11 +161,6 @@ def infer(s):
 	diff = list(s.query(e)[0] - field.queryStats(e)[0] for e in elements)
 	var = list(s.query(e)[1]**2 + field.queryStats(e)[1]**2 for e in elements)
 
-	print(fX)
-	print(s.names)
-	print(s.logX)
-	print(s.query('Fe'))
-
 	def probability(params):
 		nS = len(stars)
 		logfAcc = params[0]
@@ -179,7 +174,6 @@ def infer(s):
 		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q))]
 		like = sum(like)
 		like += gaussianLogLike((logfAcc - logf) / dlogf)
-		print(f'{logd:.2f} {logfAcc:.2f} {diff[0]-q[0]:.2f} {like:.2f}')
 
 		return like
 
@@ -189,9 +183,6 @@ def infer(s):
 	parameters = [r'$\log f$',r'$\log delta$']
 	ranges = [(logf - 3 * dlogf, min(0, logf + 3*dlogf)), (-3,3)]
 	ndim = len(ranges)
-
-	for i,p in enumerate(parameters):
-		print(i, p)
 
 	run(oDir, oPref, ranges, parameters, probability, n_live_points=1000)
 	a, meds = analyze(oDir, oPref, oDir, oPref)
@@ -211,8 +202,6 @@ def infer(s):
 	model = [field.queryStats(e)[0] + np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements]
 	outX = [s.query(e)[0] for e in elements]
 	outV = [s.query(e)[1] for e in elements]
-
-	print(model, outX)
 
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
