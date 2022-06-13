@@ -46,7 +46,7 @@ def run(outputDirectory, outputPrefix, ranges, parameters, loglikelihood, n_live
 
 
 	print(prefix)
-	result = solve(LogLikelihood=loglikelihood, Prior=pri, n_dims = ndim, importance_nested_sampling=False,resume=False,outputfiles_basename=prefix,verbose=True, n_live_points=n_live_points)
+	result = solve(LogLikelihood=loglikelihood, Prior=pri, n_dims = ndim, importance_nested_sampling=False,resume=False,outputfiles_basename=prefix,verbose=True, n_live_points=n_live_points, evidence_tolerance=0.2)
 
 	print()
 	print('evidence: %(logZ).1f +- %(logZerr).1f' % result)

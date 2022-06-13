@@ -70,16 +70,16 @@ for m in field.materials:
 		ind = m.queryIndex('S')
 		if ind is not None:			
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 for m in accretingPop.materials:
 	if m.name in exclude_S:
 		ind = m.queryIndex('S')
 		if ind is not None:
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 exclude_Zn = [
 'UCAC11105106',
@@ -93,16 +93,16 @@ for m in accretingPop.materials:
 			ind = m.queryIndex('Zn')
 			if ind is not None:
 				m.names.pop(ind)
-				np.delete(m.logX, ind)
-				np.delete(m.dlogX, ind)
+				m.logX = np.delete(m.logX, ind)
+				m.dlogX = np.delete(m.dlogX, ind)
 
 for m in field.materials:
 	if m.name in exclude_Zn:
 		ind = m.queryIndex('Zn')
 		if ind is not None:		
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 include_Na = [
 'HD139614',
@@ -114,8 +114,8 @@ for m in accretingPop.materials:
 		ind = m.queryIndex('Na')
 		if ind is not None:
 			m.names.pop(ind)
-			np.delete(m.logX, ind)
-			np.delete(m.dlogX, ind)
+			m.logX = np.delete(m.logX, ind)
+			m.dlogX = np.delete(m.dlogX, ind)
 
 field = population(field.materials)
 reference = field
@@ -161,6 +161,11 @@ def infer(s):
 	diff = list(s.query(e)[0] - field.queryStats(e)[0] for e in elements)
 	var = list(s.query(e)[1]**2 + field.queryStats(e)[1]**2 for e in elements)
 
+	print(fX)
+	print(s.names)
+	print(s.logX)
+	print(s.query('Fe'))
+
 	def probability(params):
 		nS = len(stars)
 		logfAcc = params[0]
@@ -171,10 +176,10 @@ def infer(s):
 			fAcc = 1
 
 		q = [np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in s.names if e in elements]
-
 		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q))]
 		like = sum(like)
 		like += gaussianLogLike((logfAcc - logf) / dlogf)
+		print(f'{logd:.2f} {logfAcc:.2f} {diff[0]-q[0]:.2f} {like:.2f}')
 
 		return like
 
@@ -188,7 +193,7 @@ def infer(s):
 	for i,p in enumerate(parameters):
 		print(i, p)
 
-	run(oDir, oPref, ranges, parameters, probability)
+	run(oDir, oPref, ranges, parameters, probability, n_live_points=1000)
 	a, meds = analyze(oDir, oPref, oDir, oPref)
 
 	# Plot abundances
@@ -206,6 +211,8 @@ def infer(s):
 	model = [field.queryStats(e)[0] + np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements]
 	outX = [s.query(e)[0] for e in elements]
 	outV = [s.query(e)[1] for e in elements]
+
+	print(model, outX)
 
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
@@ -231,6 +238,7 @@ def infer(s):
 accretingPop = population([m for m in accretingPop.materials if 'logfAcc' in m.params.keys() and 'dlogfAcc' in m.params.keys()])
 stars = accretingPop.materials
 for s in stars:
-	infer(s)
+	if s.name == 'HD163296':
+		infer(s)
 
 
