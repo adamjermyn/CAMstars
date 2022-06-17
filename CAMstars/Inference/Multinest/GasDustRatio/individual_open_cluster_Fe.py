@@ -149,7 +149,7 @@ def infer(s):
 		dlogf += 0.01
 
 	# Determine elements with enough information for inference
-	elements = list(e for e in s.names if e in field.species and e in ['Fe'])
+	elements = list(e for e in s.names if e in field.species and e in ['Fe','Mg','Si','Ca','Ti','Sc'])
 
 	# Sort elements by condensation temperature
 	elements = sorted(elements, key=lambda x: condenseTemps[x])
@@ -171,6 +171,7 @@ def infer(s):
 			fAcc = 1
 
 		q = [np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in s.names if e in elements]
+		print(diff,logd,q)
 		like = [gaussianLogLike((diff[j] - q[j])/var[j]**0.5) for j in range(len(q))]
 		like = sum(like)
 		like += gaussianLogLike((logfAcc - logf) / dlogf)
@@ -181,7 +182,7 @@ def infer(s):
 	oDir = os.path.abspath(oDir)
 	oPref = 'Ref'
 	parameters = [r'$\log f$',r'$\log delta$']
-	ranges = [(logf - 3 * dlogf, min(0, logf + 3*dlogf)), (-3,3)]
+	ranges = [(logf - 3 * dlogf, min(0, logf + 3*dlogf)), (-3,2)]
 	ndim = len(ranges)
 
 	run(oDir, oPref, ranges, parameters, probability, n_live_points=1000)
@@ -202,6 +203,11 @@ def infer(s):
 	model = [field.queryStats(e)[0] + np.log((1-fAcc) + fAcc * (1-fX[elements.index(e)] + 10**(logd)*fX[elements.index(e)])) for e in elements]
 	outX = [s.query(e)[0] for e in elements]
 	outV = [s.query(e)[1] for e in elements]
+
+	print(refX)
+	print(model)
+	print(outX)
+	print(fAcc, 10**logd)
 
 	fig = plt.figure()
 	ax = fig.add_subplot(211)
